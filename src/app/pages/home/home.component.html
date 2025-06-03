@@ -1,6 +1,7 @@
 <div class="headunit-home">
   <div class="status-bar">
-    <div class="clock-date">
+    <div class="clock-date"
+    (click)="goToIntro()">
       <span class="clock">{{ time }}</span>
       <span class="date">{{ date }}</span>
     </div>
@@ -21,6 +22,10 @@
     <button class="icon-btn" aria-label="Settings">
       <span class="material-icons">settings</span>
       <span>Settings</span>
+    </button>
+    <button class="icon-btn" aria-label="Screensaver" (click)="goToScreensaver()">
+      <span class="material-icons">nightlight</span>
+      <span>Screensaver</span>
     </button>
   </div>
 </div>

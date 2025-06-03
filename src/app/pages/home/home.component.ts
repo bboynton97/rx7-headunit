@@ -37,4 +37,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   goToIntro() {
     this.router.navigate(['/']);
   }
+
+  goToScreensaver() {
+    this.router.navigate(['/screensaver']);
+  }
 }

@@ -1,1 +1,10 @@
-<p>screensaver works!</p>
+<video
+  *ngIf="videoSrc"
+  [src]="videoSrc"
+  autoplay
+  loop
+  muted
+  playsinline
+  style="width: 100vw; height: 100vh; object-fit: cover; display: block;"
+  (click)="goToHome()"
+></video>
