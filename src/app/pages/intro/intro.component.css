@@ -1,0 +1,46 @@
+body, :host {
+  background: #000;
+  min-height: 100vh;
+  min-width: 100vw;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  display: block;
+  z-index: 0;
+}
+
+.hidden {
+  opacity: 0;
+  transition: opacity 2s;
+}
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 2s;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 2s;
+}
+
+img {
+  display: block;
+  margin: 0 auto;
+  max-width: 300px;
+  max-height: 300px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.hazy-shadow {
+  filter: drop-shadow(0 0 40px rgba(128,0,255,0.7)) drop-shadow(0 0 80px rgba(128,0,255,0.5));
+}
