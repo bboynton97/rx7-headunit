@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-screensaver',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './screensaver.component.html',
   styleUrl: './screensaver.component.css'
 })
@@ -15,6 +16,7 @@ export class ScreensaverComponent implements OnInit {
 
   private videoFiles: string[] = [
     'assets/video/screensavers/girl_short.mov',
+    'assets/video/screensavers/ride.mp4',
   ];
 
   ngOnInit() {
