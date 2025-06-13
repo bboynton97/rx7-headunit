@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -13,6 +14,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   time: string = '';
   date: string = '';
   private timer: any;
+
+  currentTime: string = '';
+  playbackProgress: number = 35;
+  brightness: number = 60;
+  rpmGaugeValue: number = 120; // Out of 314 (full circle)
+  tempGaugeValue: number = 80;
+  
+  private timeInterval: any;
 
   constructor(private router: Router) {
     this.updateTime();

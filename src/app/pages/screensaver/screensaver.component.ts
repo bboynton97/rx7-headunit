@@ -17,6 +17,8 @@ export class ScreensaverComponent implements OnInit {
   private videoFiles: string[] = [
     'assets/video/screensavers/girl_short.mov',
     'assets/video/screensavers/ride.mp4',
+    'assets/video/screensavers/grid.mp4',
+    'assets/video/screensavers/sunset.mp4',
   ];
 
   ngOnInit() {
