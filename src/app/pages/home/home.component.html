@@ -1,16 +1,10 @@
 <div class="dashboard">
   <!-- Top Bar -->
   <div class="top-bar">
-    <div class="time">{{ currentTime }}</div>
+    <div class="vehicle-model">RX-7 FC</div>
     <div class="music-status">MUSIC</div>
-    <div class="top-controls">
-      <button class="control-btn"><i class="icon-volume"></i></button>
-      <button class="control-btn"><i class="icon-refresh"></i></button>
-      <button class="control-btn"><i class="icon-cast"></i></button>
-    </div>
+    <div class="time">{{ time }}</div>
   </div>
-
-  <div class="vehicle-model">RX-7</div>
 
   <!-- Main Grid -->
   <div class="main-grid">
@@ -79,13 +73,26 @@
       <div class="settings-content">
         <div class="setting-item">
           <span class="setting-label">Brightness</span>
-          <div class="slider-container">
+          <div class="slider-rect-container">
+            <button class="slider-btn" (click)="decrementBrightness()">-</button>
             <input type="range" 
-                   class="brightness-slider" 
+                   class="rect-slider" 
                    min="0" 
                    max="100" 
                    [(ngModel)]="brightness">
-            <div class="slider-track"></div>
+            <button class="slider-btn" (click)="incrementBrightness()">+</button>
+          </div>
+        </div>
+        <div class="setting-item">
+          <span class="setting-label">Volume</span>
+          <div class="slider-rect-container">
+            <button class="slider-btn" (click)="decrementVolume()">-</button>
+            <input type="range" 
+                   class="rect-slider" 
+                   min="0" 
+                   max="100" 
+                   [(ngModel)]="volume">
+            <button class="slider-btn" (click)="incrementVolume()">+</button>
           </div>
         </div>
       </div>
