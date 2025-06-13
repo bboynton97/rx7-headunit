@@ -3,7 +3,7 @@
   <div class="top-bar">
     <div class="vehicle-model">RX-7 FC</div>
     <div class="music-status">MUSIC</div>
-    <div class="time">{{ time }}</div>
+    <div class="time" (click)="goToScreensaver()">{{ time }}</div>
   </div>
 
   <!-- Main Grid -->
@@ -16,22 +16,16 @@
         <div class="progress-bar">
           <div class="progress" [style.width.%]="playbackProgress"></div>
         </div>
-      </div>
-    </div>
-
-    <!-- Navigation Panel -->
-    <div class="panel navigation-panel">
-      <h3>NAVIGATION</h3>
-      <div class="nav-content">
-        <div class="compass">
-          <div class="compass-circle">
-            <div class="compass-needle"></div>
-            <div class="compass-n">N</div>
-          </div>
-        </div>
-        <div class="eta">
-          <div class="eta-label">ETA</div>
-          <div class="eta-time">18 min</div>
+        <div class="music-controls">
+          <button class="music-btn" aria-label="Back">
+            <span class="material-icons">skip_previous</span>
+          </button>
+          <button class="music-btn" aria-label="Play/Pause">
+            <span class="material-icons">play_arrow</span>
+          </button>
+          <button class="music-btn" aria-label="Skip">
+            <span class="material-icons">skip_next</span>
+          </button>
         </div>
       </div>
     </div>
@@ -67,10 +61,10 @@
       </div>
     </div>
 
-    <!-- Settings Panel -->
-    <div class="panel settings-panel">
-      <h3>SETTINGS</h3>
-      <div class="settings-content">
+    <!-- Controls Panel -->
+    <div class="panel controls-panel">
+      <h3>CONTROLS</h3>
+      <div class="controls-content">
         <div class="setting-item">
           <span class="setting-label">Brightness</span>
           <div class="slider-rect-container">
@@ -95,6 +89,14 @@
             <button class="slider-btn" (click)="incrementVolume()">+</button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="panel settings-panel">
+      <h3>SETTINGS</h3>
+      <div class="settings-content">
+        <button class="eq-btn">EQ</button>
       </div>
     </div>
   </div>
