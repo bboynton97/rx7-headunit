@@ -10,6 +10,18 @@ html, body {
 
 * {
   cursor: none !important;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection in input fields and textareas */
+input, textarea {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 a, button, input, select, textarea, [role="button"], [role="link"], [role="menuitem"], [role="option"], [role="tab"], [role="treeitem"], p, span, div, h1, h2, h3, h4, h5, h6, label {

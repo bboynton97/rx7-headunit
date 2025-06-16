@@ -20,6 +20,14 @@ export class AppComponent {
     document.body.addEventListener('mousemove', () => {
       document.body.style.cursor = 'none';
     });
+
+    // Prevent text selection
+    document.body.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+    });
+    document.body.addEventListener('dragstart', (e) => {
+      e.preventDefault();
+    });
   }
 
   playSound() {
