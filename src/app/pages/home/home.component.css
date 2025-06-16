@@ -6,17 +6,17 @@
   height: 100vh;
   box-sizing: border-box;
   overflow: hidden;
-  padding: 20px;
+  padding: 10px;
 }
 
 .top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
+  padding: 10px 15px;
   border: 2px solid #00ff88;
   border-radius: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   background: rgba(0, 255, 136, 0.05);
 }
 
@@ -64,14 +64,14 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 20px;
-  height: calc(100vh - 200px);
+  gap: 15px;
+  height: calc(100vh - 150px);
 }
 
 .panel {
   border: 2px solid #00ff88;
   border-radius: 15px;
-  padding: 20px;
+  padding: 15px;
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(10px);
   box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
@@ -381,8 +381,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 18px;
-  margin-top: 18px;
+  gap: 15px;
+  margin-top: 15px;
 }
 
 .music-btn {
@@ -425,8 +425,8 @@
   border-radius: 8px;
   font-size: 1.2rem;
   font-weight: bold;
-  padding: 10px 32px;
-  margin: 18px auto 0 auto;
+  padding: 8px 32px;
+  margin: 15px auto 0 auto;
   display: block;
   cursor: pointer;
   box-shadow: 0 0 8px #ff880044;
