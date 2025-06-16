@@ -10,7 +10,7 @@ fn greet(name: &str) -> String {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![greet,commands::audio::play_synth])
+        .invoke_handler(tauri::generate_handler![greet,commands::audio::play_synth,commands::display::set_brightness])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
