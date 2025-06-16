@@ -28,12 +28,7 @@
   border: 1px solid #ccc;
   background: #333;
   color: white;
-  cursor: pointer;
   min-width: 40px;
-}
-
-.slider-btn:hover {
-  background: #444;
 }
 
 .rect-slider {
@@ -52,7 +47,6 @@
   height: 20px;
   background: #fff;
   border-radius: 4px;
-  cursor: pointer;
 }
 
 .rect-slider::-moz-range-thumb {
@@ -60,6 +54,5 @@
   height: 20px;
   background: #fff;
   border-radius: 4px;
-  cursor: pointer;
   border: none;
 } 
