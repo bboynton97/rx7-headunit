@@ -3,11 +3,12 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ControlsComponent } from '../../components/controls/controls.component';
+import { SoundboardComponent } from '../../components/soundboard/soundboard.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, ControlsComponent],
+  imports: [CommonModule, FormsModule, ControlsComponent, SoundboardComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
