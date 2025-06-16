@@ -1,0 +1,65 @@
+.controls-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.setting-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.setting-label {
+  font-size: 1rem;
+  color: #fff;
+}
+
+.slider-rect-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slider-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #333;
+  color: white;
+  cursor: pointer;
+  min-width: 40px;
+}
+
+.slider-btn:hover {
+  background: #444;
+}
+
+.rect-slider {
+  flex: 1;
+  height: 8px;
+  -webkit-appearance: none;
+  background: #333;
+  border-radius: 4px;
+  outline: none;
+}
+
+.rect-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.rect-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+} 

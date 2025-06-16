@@ -2,12 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { invoke } from '@tauri-apps/api/core';
+import { ControlsComponent } from '../../components/controls/controls.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ControlsComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -18,28 +18,6 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   currentTime: string = '';
   playbackProgress: number = 35;
-  private _brightness: number = 60;
-
-  get brightness(): number {
-    return this._brightness;
-  }
-
-  set brightness(value: number) {
-    this._brightness = value;
-    this.updateBrightness(value);
-  }
-
-  private _volume: number = 50;
-
-  get volume(): number {
-    return this._volume;
-  }
-
-  set volume(value: number) {
-    this._volume = value;
-    this.updateVolume(value);
-  }
-
   rpmGaugeValue: number = 120; // Out of 314 (full circle)
   tempGaugeValue: number = 80;
   
@@ -71,30 +49,5 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   goToScreensaver() {
     this.router.navigate(['/screensaver']);
-  }
-
-  async incrementBrightness() {
-    this.brightness = Math.min(100, this.brightness + 1);
-  }
-  async decrementBrightness() {
-    this.brightness = Math.max(0, this.brightness - 1);
-  }
-
-  private async updateBrightness(value: number) {
-    await invoke('set_brightness', { value });
-  }
-
-  private async updateVolume(value: number) {
-    await invoke('set_system_volume', { value });
-  }
-
-  async incrementVolume() {
-    this.volume = Math.min(100, this.volume + 1);
-    await this.updateVolume(this.volume);
-  }
-
-  async decrementVolume() {
-    this.volume = Math.max(0, this.volume - 1);
-    await this.updateVolume(this.volume);
   }
 }

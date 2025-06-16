@@ -43,33 +43,8 @@
 
     <!-- Controls Panel -->
     <div class="panel controls-panel">
-      <h3>CONTROLS</h3>{{ brightness }}
-      <div class="controls-content">
-        <div class="setting-item">
-          <span class="setting-label">Brightness</span>
-          <div class="slider-rect-container">
-            <button class="slider-btn" (click)="decrementBrightness()">-</button>
-            <input type="range" 
-                   class="rect-slider" 
-                   min="0" 
-                   max="100" 
-                   [(ngModel)]="brightness">
-            <button class="slider-btn" (click)="incrementBrightness()">+</button>
-          </div>
-        </div>
-        <div class="setting-item">
-          <span class="setting-label">Volume</span> {{ volume }}
-          <div class="slider-rect-container">
-            <button class="slider-btn" (click)="decrementVolume()">-</button>
-            <input type="range" 
-                   class="rect-slider" 
-                   min="0" 
-                   max="100" 
-                   [(ngModel)]="volume">
-            <button class="slider-btn" (click)="incrementVolume()">+</button>
-          </div>
-        </div>
-      </div>
+      <h3>CONTROLS</h3>
+      <app-controls></app-controls>
     </div>
 
     <!-- Settings Panel -->
