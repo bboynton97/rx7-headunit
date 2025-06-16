@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from '@tauri-apps/api/window';
 
@@ -12,19 +12,31 @@ import { getCurrentWindow } from '@tauri-apps/api/window';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
+  private inactivityTimer: any;
+  private readonly INACTIVITY_TIMEOUT = 120000; // 2 minutes in milliseconds
 
   log = "hello";
-  constructor() {
+  constructor(private router: Router) {
     getCurrentWindow().setCursorVisible(false);
     document.body.style.cursor = 'none';
-    document.body.addEventListener('mousemove', () => {
-      document.body.style.cursor = 'none';
-    });
+    
+    // Reset inactivity timer on any user interaction
+    const resetTimer = () => {
+      if (this.router.url === '/home') {
+        clearTimeout(this.inactivityTimer);
+        this.inactivityTimer = setTimeout(() => {
+          this.router.navigate(['/screensaver']);
+        }, this.INACTIVITY_TIMEOUT);
+      }
+    };
 
-    // Prevent text selection except for interactive elements
-    document.body.addEventListener('mousedown', (e) => {
+    // Add event listeners for user interaction
+    document.addEventListener('mousemove', () => {
+      document.body.style.cursor = 'none';
+      resetTimer();
+    });
+    document.addEventListener('mousedown', (e) => {
       const target = e.target as HTMLElement;
-      // Allow interaction with inputs, buttons, and elements with role="slider"
       if (target.tagName === 'INPUT' || 
           target.tagName === 'BUTTON' || 
           target.getAttribute('role') === 'slider' ||
@@ -32,18 +44,13 @@ export class AppComponent {
         return;
       }
       e.preventDefault();
+      resetTimer();
     });
-    document.body.addEventListener('dragstart', (e) => {
-      const target = e.target as HTMLElement;
-      // Allow dragging of interactive elements
-      if (target.tagName === 'INPUT' || 
-          target.tagName === 'BUTTON' || 
-          target.getAttribute('role') === 'slider' ||
-          target.closest('[role="slider"]')) {
-        return;
-      }
-      e.preventDefault();
-    });
+    document.addEventListener('keydown', resetTimer);
+    document.addEventListener('touchstart', resetTimer);
+
+    // Initialize timer
+    resetTimer();
   }
 
   playSound() {

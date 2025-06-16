@@ -29,4 +29,12 @@ export class ScreensaverComponent implements OnInit {
   goToHome() {
     this.router.navigate(['/home']);
   }
+
+  onTimeUpdate(video: HTMLVideoElement) {
+    // If we're near the end of the video (within 0.1 seconds), restart it
+    if (video.duration - video.currentTime < 0.1) {
+      video.currentTime = 0;
+      video.play().catch(err => console.error('Error playing video:', err));
+    }
+  }
 }
