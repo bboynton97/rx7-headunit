@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { invoke } from '@tauri-apps/api/core';
 
 @Component({
   selector: 'app-home',
@@ -52,8 +53,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigate(['/screensaver']);
   }
 
-  incrementBrightness() {
+  async incrementBrightness() {
     this.brightness = Math.min(100, this.brightness + 1);
+    await invoke('set_brightness', { value: this.brightness });
   }
   decrementBrightness() {
     this.brightness = Math.max(0, this.brightness - 1);
