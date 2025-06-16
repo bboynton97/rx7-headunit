@@ -18,7 +18,17 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   currentTime: string = '';
   playbackProgress: number = 35;
-  brightness: number = 60;
+  private _brightness: number = 60;
+
+  get brightness(): number {
+    return this._brightness;
+  }
+
+  set brightness(value: number) {
+    this._brightness = value;
+    this.updateBrightness(value);
+  }
+
   volume: number = 50;
   rpmGaugeValue: number = 120; // Out of 314 (full circle)
   tempGaugeValue: number = 80;
@@ -55,11 +65,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   async incrementBrightness() {
     this.brightness = Math.min(100, this.brightness + 1);
-    await invoke('set_brightness', { value: this.brightness });
   }
-  decrementBrightness() {
+  async decrementBrightness() {
     this.brightness = Math.max(0, this.brightness - 1);
   }
+
+  private async updateBrightness(value: number) {
+    await invoke('set_brightness', { value });
+  }
+
   incrementVolume() {
     this.volume = Math.min(100, this.volume + 1);
   }
