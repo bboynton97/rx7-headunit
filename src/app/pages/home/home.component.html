@@ -30,34 +30,14 @@
       </div>
     </div>
 
-    <!-- Diagnostics Panel -->
-    <div class="panel diagnostics-panel">
-      <h3>DIAGNOSTICS</h3>
-      <div class="gauges">
-        <div class="gauge">
-          <svg class="gauge-svg" viewBox="0 0 120 120">
-            <circle cx="60" cy="60" r="50" class="gauge-bg"></circle>
-            <circle cx="60" cy="60" r="50" class="gauge-progress" 
-                    [style.stroke-dasharray]="rpmGaugeValue + ', 314'"></circle>
-          </svg>
-          <div class="gauge-label">RPM</div>
-          <div class="gauge-markers">
-            <span class="marker left">-R</span>
-            <span class="marker right">6</span>
-          </div>
-        </div>
-        <div class="gauge">
-          <svg class="gauge-svg" viewBox="0 0 120 120">
-            <circle cx="60" cy="60" r="50" class="gauge-bg"></circle>
-            <circle cx="60" cy="60" r="50" class="gauge-progress" 
-                    [style.stroke-dasharray]="tempGaugeValue + ', 314'"></circle>
-          </svg>
-          <div class="gauge-label">TEMP</div>
-          <div class="gauge-markers">
-            <span class="marker left">C</span>
-            <span class="marker right">H</span>
-          </div>
-        </div>
+    <!-- Soundboard Panel -->
+    <div class="panel soundboard-panel">
+      <h3>DO NOT PUSH</h3>
+      <div class="soundboard-grid">
+        <button class="soundboard-btn">1</button>
+        <button class="soundboard-btn">2</button>
+        <button class="soundboard-btn">3</button>
+        <button class="soundboard-btn">4</button>
       </div>
     </div>
 
