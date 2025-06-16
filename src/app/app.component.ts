@@ -16,6 +16,10 @@ export class AppComponent {
   log = "hello";
   constructor() {
     getCurrentWindow().setCursorVisible(false);
+    document.body.style.cursor = 'none';
+    document.body.addEventListener('mousemove', () => {
+      document.body.style.cursor = 'none';
+    });
   }
 
   playSound() {
