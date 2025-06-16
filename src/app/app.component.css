@@ -1,6 +1,11 @@
 html, body {
   overflow: hidden !important;
   height: 100%;
+  cursor: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .logo.angular:hover {
