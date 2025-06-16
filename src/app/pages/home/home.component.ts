@@ -29,7 +29,17 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.updateBrightness(value);
   }
 
-  volume: number = 50;
+  private _volume: number = 50;
+
+  get volume(): number {
+    return this._volume;
+  }
+
+  set volume(value: number) {
+    this._volume = value;
+    this.updateVolume(value);
+  }
+
   rpmGaugeValue: number = 120; // Out of 314 (full circle)
   tempGaugeValue: number = 80;
   
@@ -74,10 +84,17 @@ export class HomeComponent implements OnInit, OnDestroy {
     await invoke('set_brightness', { value });
   }
 
-  incrementVolume() {
-    this.volume = Math.min(100, this.volume + 1);
+  private async updateVolume(value: number) {
+    await invoke('set_system_volume', { value });
   }
-  decrementVolume() {
+
+  async incrementVolume() {
+    this.volume = Math.min(100, this.volume + 1);
+    await this.updateVolume(this.volume);
+  }
+
+  async decrementVolume() {
     this.volume = Math.max(0, this.volume - 1);
+    await this.updateVolume(this.volume);
   }
 }
