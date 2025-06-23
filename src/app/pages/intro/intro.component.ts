@@ -20,6 +20,11 @@ export class IntroComponent {
     this.startRotarySequence();
   }
 
+  // Handle click/touch anywhere during intro to skip to home
+  skipIntro() {
+    this.router.navigate(['/home']);
+  }
+
   startRotarySequence() {
     setTimeout(() => {
       this.fadeState = 'visible';
