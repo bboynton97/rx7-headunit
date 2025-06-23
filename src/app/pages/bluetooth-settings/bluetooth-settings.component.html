@@ -1,0 +1,120 @@
+<div class="bluetooth-settings">
+  <div class="header">
+    <h1>🔵 Bluetooth Settings</h1>
+    <div class="status-indicators">
+      <div class="status-item" [class.active]="status?.adapter_powered">
+        <span class="status-dot"></span>
+        <span>Adapter</span>
+      </div>
+      <div class="status-item" [class.active]="status?.discoverable">
+        <span class="status-dot"></span>
+        <span>Discoverable</span>
+      </div>
+      <div class="status-item" [class.active]="status?.pairable">
+        <span class="status-dot"></span>
+        <span>Pairable</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button 
+      class="btn btn-primary" 
+      (click)="startDiscovery()" 
+      [disabled]="isDiscovering || isLoading"
+      *ngIf="!isDiscovering">
+      🔍 Start Discovery
+    </button>
+    <button 
+      class="btn btn-secondary" 
+      (click)="stopDiscovery()" 
+      [disabled]="!isDiscovering">
+      ⏹️ Stop Discovery
+    </button>
+    <button 
+      class="btn btn-refresh" 
+      (click)="refreshStatus()" 
+      [disabled]="isLoading">
+      🔄 Refresh
+    </button>
+  </div>
+
+  <div class="error-message" *ngIf="errorMessage">
+    <span class="error-icon">⚠️</span>
+    {{ errorMessage }}
+  </div>
+
+  <div class="loading" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <span>Initializing Bluetooth...</span>
+  </div>
+
+  <div class="discovery-status" *ngIf="isDiscovering">
+    <div class="pulse-dot"></div>
+    <span>Discovering devices...</span>
+  </div>
+
+  <div class="devices-section">
+    <h2>Devices ({{ devices.length }})</h2>
+    
+    <div class="devices-list" *ngIf="devices.length > 0">
+      <div class="device-card" *ngFor="let device of devices">
+        <div class="device-info">
+          <div class="device-icon">
+            {{ getDeviceClassIcon(device) }}
+          </div>
+          <div class="device-details">
+            <div class="device-name">
+              {{ device.name || 'Unknown Device' }}
+            </div>
+            <div class="device-address">
+              {{ device.address }}
+            </div>
+            <div class="device-status" [class]="getDeviceStatusClass(device)">
+              {{ getDeviceStatusText(device) }}
+            </div>
+          </div>
+        </div>
+        
+        <div class="device-actions">
+          <button 
+            class="btn btn-small btn-primary" 
+            (click)="pairDevice(device)"
+            *ngIf="!device.paired">
+            🔗 Pair
+          </button>
+          <button 
+            class="btn btn-small btn-secondary" 
+            (click)="unpairDevice(device)"
+            *ngIf="device.paired">
+            🔓 Unpair
+          </button>
+          <button 
+            class="btn btn-small btn-success" 
+            (click)="connectDevice(device)"
+            *ngIf="device.paired && !device.connected">
+            🔌 Connect
+          </button>
+          <button 
+            class="btn btn-small btn-warning" 
+            (click)="disconnectDevice(device)"
+            *ngIf="device.connected">
+            🔌 Disconnect
+          </button>
+          <button 
+            class="btn btn-small btn-info" 
+            (click)="getAudioSinks(device)"
+            *ngIf="device.connected">
+            🎵 Audio
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="no-devices" *ngIf="devices.length === 0 && !isLoading">
+      <div class="no-devices-icon">📱</div>
+      <p>No devices found</p>
+      <p class="hint">Start discovery to find nearby Bluetooth devices</p>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,375 @@
+.bluetooth-settings {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #333;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 300;
+  color: #00bfff;
+}
+
+.status-indicators {
+  display: flex;
+  gap: 20px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.status-item.active {
+  opacity: 1;
+  color: #00ff00;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #666;
+  transition: background-color 0.3s ease;
+}
+
+.status-item.active .status-dot {
+  background-color: #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+.controls {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #00bfff, #0080ff);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0080ff, #0066cc);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #666, #444);
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #555, #333);
+  transform: translateY(-2px);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #00ff00, #00cc00);
+  color: white;
+}
+
+.btn-success:hover:not(:disabled) {
+  background: linear-gradient(135deg, #00cc00, #009900);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 255, 0, 0.3);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #ffaa00, #ff8800);
+  color: white;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff8800, #ff6600);
+  transform: translateY(-2px);
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #00ffff, #00cccc);
+  color: white;
+}
+
+.btn-info:hover:not(:disabled) {
+  background: linear-gradient(135deg, #00cccc, #009999);
+  transform: translateY(-2px);
+}
+
+.btn-refresh {
+  background: linear-gradient(135deg, #ff00ff, #cc00cc);
+  color: white;
+}
+
+.btn-refresh:hover:not(:disabled) {
+  background: linear-gradient(135deg, #cc00cc, #990099);
+  transform: translateY(-2px);
+}
+
+.btn-small {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+}
+
+.error-message {
+  background: linear-gradient(135deg, #ff4444, #cc0000);
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideIn 0.3s ease;
+}
+
+.error-icon {
+  font-size: 1.2rem;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  padding: 40px;
+  color: #00bfff;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #333;
+  border-top: 4px solid #00bfff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.discovery-status {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(0, 191, 255, 0.1);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  color: #00bfff;
+}
+
+.pulse-dot {
+  width: 12px;
+  height: 12px;
+  background-color: #00bfff;
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+}
+
+.devices-section h2 {
+  margin-bottom: 20px;
+  color: #00bfff;
+  font-size: 1.8rem;
+  font-weight: 300;
+}
+
+.devices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.device-card {
+  background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+  animation: slideIn 0.3s ease;
+}
+
+.device-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 191, 255, 0.2);
+  border-color: #00bfff;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.device-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+}
+
+.device-icon {
+  font-size: 2rem;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 191, 255, 0.1);
+  border-radius: 50%;
+}
+
+.device-details {
+  flex: 1;
+}
+
+.device-name {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: #ffffff;
+}
+
+.device-address {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 5px;
+  font-family: 'Courier New', monospace;
+}
+
+.device-status {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  font-weight: 500;
+}
+
+.status-available {
+  background: rgba(255, 170, 0, 0.2);
+  color: #ffaa00;
+}
+
+.status-paired {
+  background: rgba(0, 255, 0, 0.2);
+  color: #00ff00;
+}
+
+.status-connected {
+  background: rgba(0, 191, 255, 0.2);
+  color: #00bfff;
+}
+
+.device-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.no-devices {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.no-devices-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.no-devices p {
+  margin: 10px 0;
+  font-size: 1.1rem;
+}
+
+.no-devices .hint {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .bluetooth-settings {
+    padding: 15px;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .status-indicators {
+    justify-content: center;
+  }
+  
+  .controls {
+    justify-content: center;
+  }
+  
+  .device-card {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .device-actions {
+    justify-content: center;
+  }
+} 

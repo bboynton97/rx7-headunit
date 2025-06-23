@@ -51,4 +51,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   goToScreensaver() {
     this.router.navigate(['/screensaver']);
   }
+
+  goToAudioSettings() {
+    this.router.navigate(['/audio-settings']);
+  }
+
+  goToBluetoothSettings() {
+    this.router.navigate(['/bluetooth-settings']);
+  }
 }
