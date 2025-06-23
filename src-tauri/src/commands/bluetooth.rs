@@ -59,8 +59,46 @@ impl BluetoothManager {
         adapter.set_discoverable(true).await?;
         adapter.set_pairable(true).await?;
         
+        // Set the adapter alias to "rx7 fc"
+        adapter.set_alias("rx7 fc".to_string()).await?;
+        
         self.session = Some(session);
         self.adapter = Some(adapter);
+        
+        // Refresh device list after initialization
+        self.refresh_devices().await?;
+        
+        Ok(())
+    }
+
+    pub async fn refresh_devices(&self) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+        if let Some(adapter) = &self.adapter {
+            let mut devices = self.devices.write().await;
+            devices.clear();
+            
+            // Get all devices from the adapter
+            for device_path in adapter.device_addresses().await? {
+                if let Ok(device) = adapter.device(device_path) {
+                    let address = device_path.to_string();
+                    let name = device.name().await.ok().flatten();
+                    let class = device.class().await.ok().flatten();
+                    let paired = device.is_paired().await.unwrap_or(false);
+                    let connected = device.is_connected().await.unwrap_or(false);
+                    let trusted = device.is_trusted().await.unwrap_or(false);
+                    
+                    let bluetooth_device = BluetoothDevice {
+                        address,
+                        name,
+                        class,
+                        paired,
+                        connected,
+                        trusted,
+                    };
+                    
+                    devices.insert(bluetooth_device.address.clone(), bluetooth_device);
+                }
+            }
+        }
         Ok(())
     }
 
@@ -77,6 +115,9 @@ impl BluetoothManager {
         if let Some(adapter) = &self.adapter {
             // Note: The actual method name might be different
             println!("Discovery stopped (placeholder)");
+            
+            // Refresh device list after discovery stops
+            self.refresh_devices().await?;
         }
         Ok(())
     }
@@ -91,6 +132,9 @@ impl BluetoothManager {
             let address = Address::from_str(address)?;
             let device = adapter.device(address)?;
             device.pair().await?;
+            
+            // Refresh device list after pairing
+            self.refresh_devices().await?;
         }
         Ok(())
     }
@@ -99,8 +143,15 @@ impl BluetoothManager {
         if let Some(adapter) = &self.adapter {
             let address = Address::from_str(address)?;
             let device = adapter.device(address)?;
-            // Note: The actual method name might be different
-            println!("Device unpaired (placeholder)");
+            // Disconnect the device first
+            device.disconnect().await?;
+            
+            // Remove from our internal device list
+            let mut devices = self.devices.write().await;
+            devices.remove(&address.to_string());
+            
+            // Refresh device list after unpairing
+            self.refresh_devices().await?;
         }
         Ok(())
     }
@@ -110,6 +161,9 @@ impl BluetoothManager {
             let address = Address::from_str(address)?;
             let device = adapter.device(address)?;
             device.connect().await?;
+            
+            // Refresh device list after connecting
+            self.refresh_devices().await?;
         }
         Ok(())
     }
@@ -119,6 +173,9 @@ impl BluetoothManager {
             let address = Address::from_str(address)?;
             let device = adapter.device(address)?;
             device.disconnect().await?;
+            
+            // Refresh device list after disconnecting
+            self.refresh_devices().await?;
         }
         Ok(())
     }
@@ -211,6 +268,12 @@ pub async fn disconnect_bluetooth_device(address: String) -> Result<(), String> 
 pub async fn get_bluetooth_audio_sinks(address: String) -> Result<Vec<String>, String> {
     let manager = BLUETOOTH_MANAGER.read().await;
     manager.get_audio_sinks(&address).await.map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub async fn refresh_bluetooth_devices() -> Result<(), String> {
+    let manager = BLUETOOTH_MANAGER.read().await;
+    manager.refresh_devices().await.map_err(|e| e.to_string())
 }
 
 #[tauri::command]

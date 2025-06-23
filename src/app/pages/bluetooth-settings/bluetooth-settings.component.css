@@ -282,11 +282,6 @@
   transition: all 0.3s ease;
 }
 
-.device-card:hover {
-  box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
-  transform: translateY(-2px);
-}
-
 @keyframes slideIn {
   from {
     opacity: 0;

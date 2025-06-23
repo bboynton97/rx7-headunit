@@ -11,6 +11,7 @@ pub fn run() {
             commands::bluetooth::start_bluetooth_discovery,
             commands::bluetooth::stop_bluetooth_discovery,
             commands::bluetooth::get_bluetooth_devices,
+            commands::bluetooth::refresh_bluetooth_devices,
             commands::bluetooth::pair_bluetooth_device,
             commands::bluetooth::unpair_bluetooth_device,
             commands::bluetooth::connect_bluetooth_device,

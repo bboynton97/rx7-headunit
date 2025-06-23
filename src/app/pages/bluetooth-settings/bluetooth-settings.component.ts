@@ -132,12 +132,22 @@ export class BluetoothSettingsComponent implements OnInit, OnDestroy {
     }
   }
 
-    async refreshStatus() {
+  async refreshStatus() {
     try {
       this.status = await invoke<BluetoothStatus>('get_bluetooth_status');
       this.devices = this.status?.devices || [];
     } catch (error) {
       console.error('Failed to refresh Bluetooth status:', error);
+    }
+  }
+
+  async refreshDevices() {
+    try {
+      this.errorMessage = '';
+      await invoke('refresh_bluetooth_devices');
+      await this.refreshStatus();
+    } catch (error) {
+      this.errorMessage = `Failed to refresh devices: ${error}`;
     }
   }
 
@@ -173,6 +183,6 @@ export class BluetoothSettingsComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate(['/']);
+    this.router.navigate(['/home']);
   }
 } 
