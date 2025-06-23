@@ -18,25 +18,32 @@
   </div>
 
   <div class="controls">
-    <button 
-      class="btn btn-primary" 
-      (click)="startDiscovery()" 
-      [disabled]="isDiscovering || isLoading"
-      *ngIf="!isDiscovering">
-      🔍 Start Discovery
-    </button>
-    <button 
-      class="btn btn-secondary" 
-      (click)="stopDiscovery()" 
-      [disabled]="!isDiscovering">
-      ⏹️ Stop Discovery
-    </button>
-    <button 
-      class="btn btn-refresh" 
-      (click)="refreshStatus()" 
-      [disabled]="isLoading">
-      🔄 Refresh
-    </button>
+    <div class="controls-left">
+      <button class="btn btn-back" (click)="goBack()">
+        ⬅️ Back
+      </button>
+    </div>
+    <div class="controls-right">
+      <button 
+        class="btn btn-primary" 
+        (click)="startDiscovery()" 
+        [disabled]="isDiscovering || isLoading"
+        *ngIf="!isDiscovering">
+        🔍 Start Discovery
+      </button>
+      <button 
+        class="btn btn-secondary" 
+        (click)="stopDiscovery()" 
+        [disabled]="!isDiscovering">
+        ⏹️ Stop Discovery
+      </button>
+      <button 
+        class="btn btn-refresh" 
+        (click)="refreshStatus()" 
+        [disabled]="isLoading">
+        🔄 Refresh
+      </button>
+    </div>
   </div>
 
   <div class="error-message" *ngIf="errorMessage">

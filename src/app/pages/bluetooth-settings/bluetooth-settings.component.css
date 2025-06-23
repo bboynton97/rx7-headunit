@@ -1,25 +1,44 @@
 .bluetooth-settings {
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
-  color: #ffffff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: #00ff88;
+  font-family: 'Courier New', monospace, 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 10px;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #333;
+  padding: 15px 20px;
+  border: 2px solid #00ff88;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  background: rgba(0, 255, 136, 0.05);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+}
+
+.btn-back {
+  border-color: #ff8800;
+  color: #ff8800;
+  padding: 8px 16px;
+  font-size: 1rem;
+}
+
+.btn-back:hover:not(:disabled) {
+  background: rgba(255, 136, 0, 0.1);
+  box-shadow: 0 0 15px rgba(255, 136, 0, 0.5);
 }
 
 .header h1 {
   margin: 0;
   font-size: 2.5rem;
-  font-weight: 300;
-  color: #00bfff;
+  font-weight: bold;
+  color: #ff8800;
+  text-shadow: 0 0 10px #ff8800;
 }
 
 .status-indicators {
@@ -31,125 +50,150 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  color: #00ff88;
   opacity: 0.6;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .status-item.active {
   opacity: 1;
-  color: #00ff00;
+  color: #00ff88;
+  text-shadow: 0 0 10px #00ff88;
 }
 
 .status-dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background-color: #666;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .status-item.active .status-dot {
-  background-color: #00ff00;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  background-color: #00ff88;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
 }
 
 .controls {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
   gap: 15px;
-  margin-bottom: 30px;
+}
+
+.controls-left {
+  display: flex;
+  align-items: center;
+}
+
+.controls-right {
+  display: flex;
+  gap: 15px;
   flex-wrap: wrap;
 }
 
 .btn {
+  background: transparent;
+  border: 2px solid #00ff88;
+  color: #00ff88;
   padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  font-family: 'Courier New', monospace, 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
 }
 
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  border-color: #666;
+  color: #666;
+}
+
+.btn:hover:not(:disabled) {
+  background: rgba(0, 255, 136, 0.1);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+  transform: translateY(-2px);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #00bfff, #0080ff);
-  color: white;
+  border-color: #00ff88;
+  color: #00ff88;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #0080ff, #0066cc);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 191, 255, 0.3);
+  background: rgba(0, 255, 136, 0.1);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, #666, #444);
-  color: white;
+  border-color: #ff8800;
+  color: #ff8800;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #555, #333);
-  transform: translateY(-2px);
+  background: rgba(255, 136, 0, 0.1);
+  box-shadow: 0 0 15px rgba(255, 136, 0, 0.5);
 }
 
 .btn-success {
-  background: linear-gradient(135deg, #00ff00, #00cc00);
-  color: white;
+  border-color: #00ff88;
+  color: #00ff88;
 }
 
 .btn-success:hover:not(:disabled) {
-  background: linear-gradient(135deg, #00cc00, #009900);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 255, 0, 0.3);
+  background: rgba(0, 255, 136, 0.1);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
 }
 
 .btn-warning {
-  background: linear-gradient(135deg, #ffaa00, #ff8800);
-  color: white;
+  border-color: #ff8800;
+  color: #ff8800;
 }
 
 .btn-warning:hover:not(:disabled) {
-  background: linear-gradient(135deg, #ff8800, #ff6600);
-  transform: translateY(-2px);
+  background: rgba(255, 136, 0, 0.1);
+  box-shadow: 0 0 15px rgba(255, 136, 0, 0.5);
 }
 
 .btn-info {
-  background: linear-gradient(135deg, #00ffff, #00cccc);
-  color: white;
+  border-color: #00ffff;
+  color: #00ffff;
 }
 
 .btn-info:hover:not(:disabled) {
-  background: linear-gradient(135deg, #00cccc, #009999);
-  transform: translateY(-2px);
+  background: rgba(0, 255, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
 }
 
 .btn-refresh {
-  background: linear-gradient(135deg, #ff00ff, #cc00cc);
-  color: white;
+  border-color: #ff00ff;
+  color: #ff00ff;
 }
 
 .btn-refresh:hover:not(:disabled) {
-  background: linear-gradient(135deg, #cc00cc, #990099);
-  transform: translateY(-2px);
+  background: rgba(255, 0, 255, 0.1);
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
 }
 
 .btn-small {
   padding: 8px 16px;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .error-message {
-  background: linear-gradient(135deg, #ff4444, #cc0000);
-  color: white;
+  background: rgba(255, 68, 68, 0.1);
+  border: 2px solid #ff4444;
+  color: #ff4444;
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 20px;
@@ -157,6 +201,7 @@
   align-items: center;
   gap: 10px;
   animation: slideIn 0.3s ease;
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.3);
 }
 
 .error-icon {
@@ -169,16 +214,17 @@
   align-items: center;
   gap: 15px;
   padding: 40px;
-  color: #00bfff;
+  color: #00ff88;
 }
 
 .spinner {
   width: 40px;
   height: 40px;
   border: 4px solid #333;
-  border-top: 4px solid #00bfff;
+  border-top: 4px solid #00ff88;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
 }
 
 @keyframes spin {
@@ -191,18 +237,21 @@
   align-items: center;
   gap: 15px;
   padding: 15px;
-  background: rgba(0, 191, 255, 0.1);
+  background: rgba(0, 255, 136, 0.05);
+  border: 2px solid #00ff88;
   border-radius: 8px;
   margin-bottom: 20px;
-  color: #00bfff;
+  color: #00ff88;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
 }
 
 .pulse-dot {
   width: 12px;
   height: 12px;
-  background-color: #00bfff;
+  background-color: #00ff88;
   border-radius: 50%;
   animation: pulse 1.5s ease-in-out infinite;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
 }
 
 @keyframes pulse {
@@ -211,10 +260,10 @@
 }
 
 .devices-section h2 {
-  margin-bottom: 20px;
-  color: #00bfff;
+  color: #ff8800;
   font-size: 1.8rem;
-  font-weight: 300;
+  margin-bottom: 15px;
+  text-shadow: 0 0 10px #ff8800;
 }
 
 .devices-list {
@@ -224,27 +273,24 @@
 }
 
 .device-card {
-  background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
-  border: 1px solid #333;
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  border: 2px solid #00ff88;
+  border-radius: 10px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
   transition: all 0.3s ease;
-  animation: slideIn 0.3s ease;
 }
 
 .device-card:hover {
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 191, 255, 0.2);
-  border-color: #00bfff;
 }
 
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(-20px);
   }
   to {
     opacity: 1;
@@ -256,18 +302,21 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  flex: 1;
+  margin-bottom: 15px;
 }
 
 .device-icon {
-  font-size: 2rem;
   width: 50px;
   height: 50px;
+  background: rgba(0, 255, 136, 0.1);
+  border: 2px solid #00ff88;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 191, 255, 0.1);
-  border-radius: 50%;
+  font-size: 1.5rem;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+  font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
 }
 
 .device-details {
@@ -275,100 +324,102 @@
 }
 
 .device-name {
+  color: #00ff88;
   font-size: 1.2rem;
-  font-weight: 500;
+  font-weight: bold;
   margin-bottom: 5px;
-  color: #ffffff;
+  text-shadow: 0 0 10px #00ff88;
 }
 
 .device-address {
-  font-size: 0.9rem;
   color: #888;
-  margin-bottom: 5px;
+  font-size: 0.9rem;
   font-family: 'Courier New', monospace;
+  margin-bottom: 5px;
 }
 
 .device-status {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  font-weight: bold;
   padding: 4px 8px;
   border-radius: 4px;
   display: inline-block;
-  font-weight: 500;
 }
 
 .status-available {
-  background: rgba(255, 170, 0, 0.2);
-  color: #ffaa00;
+  color: #00ff88;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid #00ff88;
 }
 
 .status-paired {
-  background: rgba(0, 255, 0, 0.2);
-  color: #00ff00;
+  color: #ff8800;
+  background: rgba(255, 136, 0, 0.1);
+  border: 1px solid #ff8800;
 }
 
 .status-connected {
-  background: rgba(0, 191, 255, 0.2);
-  color: #00bfff;
+  color: #00ffff;
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid #00ffff;
 }
 
 .device-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 .no-devices {
   text-align: center;
-  padding: 60px 20px;
-  color: #666;
+  padding: 40px;
+  color: #888;
 }
 
 .no-devices-icon {
-  font-size: 4rem;
-  margin-bottom: 20px;
+  font-size: 3rem;
+  margin-bottom: 15px;
   opacity: 0.5;
+  font-family: 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
 }
 
 .no-devices p {
-  margin: 10px 0;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
 }
 
 .no-devices .hint {
-  font-size: 0.9rem;
+  font-size: 1rem;
   opacity: 0.7;
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
   .bluetooth-settings {
-    padding: 15px;
+    padding: 10px;
   }
-  
+
   .header {
     flex-direction: column;
     gap: 15px;
     text-align: center;
   }
-  
+
   .header h1 {
     font-size: 2rem;
   }
-  
+
   .status-indicators {
     justify-content: center;
   }
-  
+
   .controls {
     justify-content: center;
   }
-  
+
   .device-card {
-    flex-direction: column;
-    gap: 15px;
-    text-align: center;
+    padding: 10px;
   }
-  
+
   .device-actions {
     justify-content: center;
   }

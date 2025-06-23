@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { invoke } from '@tauri-apps/api/core';
 
 interface BluetoothDevice {
@@ -33,6 +34,8 @@ export class BluetoothSettingsComponent implements OnInit, OnDestroy {
   errorMessage = '';
 
   private statusInterval: any;
+
+  constructor(private router: Router) {}
 
   ngOnInit() {
     this.initializeBluetooth();
@@ -167,5 +170,9 @@ export class BluetoothSettingsComponent implements OnInit, OnDestroy {
     if (device.connected) return 'status-connected';
     if (device.paired) return 'status-paired';
     return 'status-available';
+  }
+
+  goBack() {
+    this.router.navigate(['/']);
   }
 } 
