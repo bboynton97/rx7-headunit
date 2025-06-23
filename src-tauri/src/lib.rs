@@ -17,7 +17,16 @@ pub fn run() {
             commands::bluetooth::connect_bluetooth_device,
             commands::bluetooth::disconnect_bluetooth_device,
             commands::bluetooth::get_bluetooth_audio_sinks,
-            commands::bluetooth::get_bluetooth_status
+            commands::bluetooth::get_bluetooth_status,
+            // Media control commands
+            commands::bluetooth::play_bluetooth_media,
+            commands::bluetooth::pause_bluetooth_media,
+            commands::bluetooth::next_bluetooth_track,
+            commands::bluetooth::previous_bluetooth_track,
+            commands::bluetooth::stop_bluetooth_media,
+            commands::bluetooth::get_bluetooth_media_info,
+            commands::bluetooth::set_bluetooth_volume,
+            commands::bluetooth::get_bluetooth_volume
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

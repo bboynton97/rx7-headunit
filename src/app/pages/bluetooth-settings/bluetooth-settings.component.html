@@ -80,6 +80,14 @@
             <div class="device-status" [class]="getDeviceStatusClass(device)">
               {{ getDeviceStatusText(device) }}
             </div>
+            <div class="media-info" *ngIf="device.connected && mediaInfo[device.address]">
+              <div class="media-status">
+                {{ getMediaStatusIcon(device) }} {{ getMediaStatusText(device) }}
+              </div>
+              <div class="track-info" *ngIf="mediaInfo[device.address].artist">
+                {{ mediaInfo[device.address].artist }} - {{ mediaInfo[device.address].album }}
+              </div>
+            </div>
           </div>
         </div>
         
@@ -114,6 +122,54 @@
             *ngIf="device.connected">
             🎵 Audio
           </button>
+        </div>
+
+        <!-- Media Controls for Connected Devices -->
+        <div class="media-controls" *ngIf="device.connected">
+          <div class="media-controls-row">
+            <button 
+              class="btn btn-small btn-media" 
+              (click)="playMedia(device)"
+              title="Play">
+              ▶️
+            </button>
+            <button 
+              class="btn btn-small btn-media" 
+              (click)="pauseMedia(device)"
+              title="Pause">
+              ⏸️
+            </button>
+            <button 
+              class="btn btn-small btn-media" 
+              (click)="stopMedia(device)"
+              title="Stop">
+              ⏹️
+            </button>
+            <button 
+              class="btn btn-small btn-media" 
+              (click)="previousTrack(device)"
+              title="Previous Track">
+              ⏮️
+            </button>
+            <button 
+              class="btn btn-small btn-media" 
+              (click)="nextTrack(device)"
+              title="Next Track">
+              ⏭️
+            </button>
+          </div>
+          
+          <!-- Volume Control -->
+          <div class="volume-control" *ngIf="volumeLevels[device.address] !== undefined">
+            <label class="volume-label">🔊 Volume: {{ volumeLevels[device.address] }}%</label>
+            <input 
+              type="range" 
+              min="0" 
+              max="100" 
+              [value]="volumeLevels[device.address]"
+              (input)="setVolume(device, $event.target.value)"
+              class="volume-slider">
+          </div>
         </div>
       </div>
     </div>
