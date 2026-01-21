@@ -215,6 +215,32 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
       this.gifFrames = [];
       this.gifFrameDelays = [];
       
+      // Detect background color from the first frame's corner pixels
+      const firstFrameData = new Uint8Array(width * height * 4);
+      gifReader.decodeAndBlitFrameRGBA(0, firstFrameData);
+      
+      // Sample corners to find background color
+      const corners = [
+        0, // top-left
+        (width - 1) * 4, // top-right
+        (height - 1) * width * 4, // bottom-left
+        ((height - 1) * width + (width - 1)) * 4 // bottom-right
+      ];
+      
+      // Get the most common corner color as background
+      const bgR = firstFrameData[corners[0]];
+      const bgG = firstFrameData[corners[0] + 1];
+      const bgB = firstFrameData[corners[0] + 2];
+      
+      // Color similarity threshold for background detection
+      const colorThreshold = 30;
+      
+      const isBackgroundColor = (r: number, g: number, b: number): boolean => {
+        return Math.abs(r - bgR) < colorThreshold &&
+               Math.abs(g - bgG) < colorThreshold &&
+               Math.abs(b - bgB) < colorThreshold;
+      };
+      
       for (let i = 0; i < numFrames; i++) {
         const frameInfo = gifReader.frameInfo(i);
         const frameData = new Uint8Array(width * height * 4);
@@ -232,17 +258,30 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
         }
         
         // Blit the new frame data onto the composite
-        // Only overwrite pixels that are not transparent in the new frame
+        // Make background color transparent
         for (let y = 0; y < height; y++) {
           for (let x = 0; x < width; x++) {
             const srcIdx = (y * width + x) * 4;
             const alpha = frameData[srcIdx + 3];
             
             if (alpha > 0) {
-              compositeData.data[srcIdx] = frameData[srcIdx];       // R
-              compositeData.data[srcIdx + 1] = frameData[srcIdx + 1]; // G
-              compositeData.data[srcIdx + 2] = frameData[srcIdx + 2]; // B
-              compositeData.data[srcIdx + 3] = frameData[srcIdx + 3]; // A
+              const r = frameData[srcIdx];
+              const g = frameData[srcIdx + 1];
+              const b = frameData[srcIdx + 2];
+              
+              // Check if this pixel matches the background color
+              if (isBackgroundColor(r, g, b)) {
+                // Make it transparent
+                compositeData.data[srcIdx] = 0;
+                compositeData.data[srcIdx + 1] = 0;
+                compositeData.data[srcIdx + 2] = 0;
+                compositeData.data[srcIdx + 3] = 0;
+              } else {
+                compositeData.data[srcIdx] = r;
+                compositeData.data[srcIdx + 1] = g;
+                compositeData.data[srcIdx + 2] = b;
+                compositeData.data[srcIdx + 3] = alpha;
+              }
             }
           }
         }
