@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import * as THREE from 'three';
 import { CrtSceneService } from '../../services/crt-scene.service';
+// @ts-ignore - omggif doesn't have type definitions
+import { GifReader } from 'omggif';
 
 @Component({
   selector: 'app-intro',
@@ -17,13 +19,20 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
   private rx7Audio: HTMLAudioElement | null = null;
   private phase: 'boot' | 'rotary' | 'rx7' | 'transition' = 'boot';
   private clock = new THREE.Clock();
-  private bootTextMesh: THREE.Mesh | null = null;
-  private rotaryGroup: THREE.Group | null = null;
-  private rx7Group: THREE.Group | null = null;
+  private bootGroup: THREE.Group | null = null;
+  private rotarySprite: THREE.Mesh | null = null;
+  private rx7Sprite: THREE.Mesh | null = null;
   private particles: THREE.Points | null = null;
   private glitchIntensity = 0;
   private targetGlitch = 0;
   private phaseTime = 0;
+  private camera: THREE.PerspectiveCamera | null = null;
+  
+  // GIF animation frames
+  private gifFrames: THREE.DataTexture[] = [];
+  private gifFrameDelays: number[] = [];
+  private gifStartTime = 0;
+  private currentGifFrame = 0;
 
   constructor(
     private router: Router,
@@ -53,30 +62,31 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
       crtIntensity: 0.8
     });
 
-    camera.position.z = 8;
+    this.camera = camera;
+    camera.position.z = 5;
 
     // Create starfield particles
     this.createStarfield(scene);
 
-    // Create boot sequence text
-    this.createBootText(scene);
+    // Create boot sequence elements
+    this.createBootSequence(scene);
 
-    // Create rotary engine group (hidden initially)
-    this.createRotaryEngine(scene);
+    // Load and create rotary.gif sprite with frame-by-frame animation
+    this.createRotarySprite(scene);
 
-    // Create RX7 logo group (hidden initially)
-    this.createRX7Logo(scene);
+    // Load and create rx7.png sprite
+    this.createRx7Sprite(scene);
 
     // Add ambient lighting
-    const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
     scene.add(ambientLight);
 
-    // Add point lights
-    const pointLight1 = new THREE.PointLight(0x00ff88, 2, 50);
+    // Add point lights for glow effects
+    const pointLight1 = new THREE.PointLight(0x00ff88, 1, 50);
     pointLight1.position.set(5, 5, 5);
     scene.add(pointLight1);
 
-    const pointLight2 = new THREE.PointLight(0xff8800, 2, 50);
+    const pointLight2 = new THREE.PointLight(0xff8800, 1, 50);
     pointLight2.position.set(-5, -5, 5);
     scene.add(pointLight2);
 
@@ -94,11 +104,11 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
     const vertices = [];
     const colors = [];
 
-    for (let i = 0; i < 2000; i++) {
+    for (let i = 0; i < 1500; i++) {
       vertices.push(
-        (Math.random() - 0.5) * 100,
-        (Math.random() - 0.5) * 100,
-        (Math.random() - 0.5) * 100
+        (Math.random() - 0.5) * 80,
+        (Math.random() - 0.5) * 80,
+        (Math.random() - 0.5) * 80
       );
       
       const color = new THREE.Color();
@@ -110,291 +120,253 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
-      size: 0.1,
+      size: 0.08,
       vertexColors: true,
       transparent: true,
-      opacity: 0.8
+      opacity: 0.6
     });
 
     this.particles = new THREE.Points(geometry, material);
     scene.add(this.particles);
   }
 
-  private createBootText(scene: THREE.Scene) {
-    const group = new THREE.Group();
+  private createBootSequence(scene: THREE.Scene) {
+    this.bootGroup = new THREE.Group();
 
-    // Create wireframe hexagon as frame
-    const hexGeometry = new THREE.RingGeometry(2.5, 2.8, 6);
+    // Create hexagonal frame
+    const hexGeometry = new THREE.RingGeometry(2.2, 2.5, 6);
     const hexMaterial = new THREE.MeshBasicMaterial({
       color: 0x00ff88,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0,
       side: THREE.DoubleSide
     });
     const hexMesh = new THREE.Mesh(hexGeometry, hexMaterial);
-    group.add(hexMesh);
+    hexMesh.userData['type'] = 'hex';
+    this.bootGroup.add(hexMesh);
 
-    // Create inner hexagon
-    const innerHexGeometry = new THREE.RingGeometry(1.8, 2.0, 6);
+    // Inner hexagon
+    const innerHexGeometry = new THREE.RingGeometry(1.6, 1.8, 6);
     const innerHexMesh = new THREE.Mesh(innerHexGeometry, hexMaterial.clone());
-    group.add(innerHexMesh);
+    innerHexMesh.userData['type'] = 'hex';
+    this.bootGroup.add(innerHexMesh);
 
-    // Create boot lines as small boxes
-    for (let i = 0; i < 5; i++) {
-      const lineGeometry = new THREE.BoxGeometry(2, 0.08, 0.01);
+    // Create "INITIALIZING" text placeholder (horizontal lines)
+    for (let i = 0; i < 4; i++) {
+      const lineGeometry = new THREE.BoxGeometry(1.8, 0.06, 0.01);
       const lineMaterial = new THREE.MeshBasicMaterial({
         color: 0x00ff88,
         transparent: true,
         opacity: 0
       });
       const lineMesh = new THREE.Mesh(lineGeometry, lineMaterial);
-      lineMesh.position.y = 0.5 - i * 0.25;
-      lineMesh.userData = { delay: i * 0.15 };
-      group.add(lineMesh);
+      lineMesh.position.y = 0.4 - i * 0.2;
+      lineMesh.userData['type'] = 'line';
+      lineMesh.userData['delay'] = i * 0.12;
+      this.bootGroup.add(lineMesh);
     }
 
-    // Create loading bar frame
+    // Loading bar frame
     const loadingFrame = new THREE.Mesh(
-      new THREE.BoxGeometry(3, 0.3, 0.01),
-      new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.3 })
+      new THREE.BoxGeometry(2.5, 0.2, 0.01),
+      new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0 })
     );
-    loadingFrame.position.y = -1.2;
-    group.add(loadingFrame);
+    loadingFrame.position.y = -0.8;
+    loadingFrame.userData['type'] = 'loadingFrame';
+    this.bootGroup.add(loadingFrame);
 
-    // Create loading bar fill
+    // Loading bar fill
     const loadingFill = new THREE.Mesh(
-      new THREE.BoxGeometry(0.01, 0.25, 0.02),
-      new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.9 })
+      new THREE.BoxGeometry(0.01, 0.15, 0.02),
+      new THREE.MeshBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0 })
     );
-    loadingFill.position.y = -1.2;
-    loadingFill.position.x = -1.45;
-    loadingFill.userData = { isLoadingBar: true };
-    group.add(loadingFill);
+    loadingFill.position.y = -0.8;
+    loadingFill.position.x = -1.2;
+    loadingFill.userData['type'] = 'loadingFill';
+    this.bootGroup.add(loadingFill);
 
-    // Add scanline effect planes
-    for (let i = 0; i < 8; i++) {
-      const scanline = new THREE.Mesh(
-        new THREE.PlaneGeometry(5, 0.02),
-        new THREE.MeshBasicMaterial({ 
-          color: 0x00ff88, 
-          transparent: true, 
-          opacity: 0.1 
-        })
-      );
-      scanline.position.y = 2 - i * 0.5;
-      scanline.position.z = 0.1;
-      group.add(scanline);
-    }
-
-    group.visible = true;
-    scene.add(group);
-    this.bootTextMesh = group as unknown as THREE.Mesh;
+    this.bootGroup.visible = true;
+    scene.add(this.bootGroup);
   }
 
-  private createRotaryEngine(scene: THREE.Scene) {
-    this.rotaryGroup = new THREE.Group();
-
-    // Create rotor housing (epitrochoid shape approximation)
-    const housingShape = new THREE.Shape();
-    const segments = 64;
-    for (let i = 0; i <= segments; i++) {
-      const angle = (i / segments) * Math.PI * 2;
-      // Epitrochoid parameters
-      const R = 1.5;
-      const r = 0.5;
-      const d = 0.3;
-      const x = (R - r) * Math.cos(angle) + d * Math.cos(((R - r) / r) * angle);
-      const y = (R - r) * Math.sin(angle) - d * Math.sin(((R - r) / r) * angle);
+  private async createRotarySprite(scene: THREE.Scene) {
+    try {
+      // Fetch the GIF file
+      const response = await fetch('assets/rotary.gif');
+      const arrayBuffer = await response.arrayBuffer();
+      const bytes = new Uint8Array(arrayBuffer);
       
-      if (i === 0) {
-        housingShape.moveTo(x * 1.2, y * 1.2);
-      } else {
-        housingShape.lineTo(x * 1.2, y * 1.2);
+      // Decode GIF using omggif
+      const gifReader = new GifReader(bytes);
+      const numFrames = gifReader.numFrames();
+      const width = gifReader.width;
+      const height = gifReader.height;
+      
+      // Create a canvas to composite frames properly (handles GIF disposal methods)
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d')!;
+      
+      // Create an ImageData to work with
+      const compositeData = ctx.createImageData(width, height);
+      
+      // Extract each frame with proper compositing
+      this.gifFrames = [];
+      this.gifFrameDelays = [];
+      
+      for (let i = 0; i < numFrames; i++) {
+        const frameInfo = gifReader.frameInfo(i);
+        const frameData = new Uint8Array(width * height * 4);
+        
+        // Decode frame - this gives us just the changed pixels for this frame
+        gifReader.decodeAndBlitFrameRGBA(i, frameData);
+        
+        // Composite onto the running canvas
+        // Handle disposal method
+        if (i === 0 || frameInfo.disposal === 2) {
+          // Clear to background (or first frame)
+          for (let j = 0; j < compositeData.data.length; j++) {
+            compositeData.data[j] = 0;
+          }
+        }
+        
+        // Blit the new frame data onto the composite
+        // Only overwrite pixels that are not transparent in the new frame
+        for (let y = 0; y < height; y++) {
+          for (let x = 0; x < width; x++) {
+            const srcIdx = (y * width + x) * 4;
+            const alpha = frameData[srcIdx + 3];
+            
+            if (alpha > 0) {
+              compositeData.data[srcIdx] = frameData[srcIdx];       // R
+              compositeData.data[srcIdx + 1] = frameData[srcIdx + 1]; // G
+              compositeData.data[srcIdx + 2] = frameData[srcIdx + 2]; // B
+              compositeData.data[srcIdx + 3] = frameData[srcIdx + 3]; // A
+            }
+          }
+        }
+        
+        // Create a copy of the current composite state for this frame
+        const frameCopy = new Uint8Array(compositeData.data);
+        
+        // Create texture from composited frame data
+        const frameTexture = new THREE.DataTexture(frameCopy, width, height, THREE.RGBAFormat);
+        frameTexture.minFilter = THREE.LinearFilter;
+        frameTexture.magFilter = THREE.LinearFilter;
+        frameTexture.flipY = true;
+        frameTexture.needsUpdate = true;
+        
+        this.gifFrames.push(frameTexture);
+        // GIF delays are in centiseconds, convert to milliseconds (minimum 20ms to prevent too fast animation)
+        this.gifFrameDelays.push(Math.max(frameInfo.delay * 10, 20));
       }
-    }
-
-    const housingGeometry = new THREE.ExtrudeGeometry(housingShape, {
-      depth: 0.3,
-      bevelEnabled: true,
-      bevelThickness: 0.05,
-      bevelSize: 0.05,
-      bevelSegments: 2
-    });
-    
-    const housingMaterial = new THREE.MeshStandardMaterial({
-      color: 0x333333,
-      metalness: 0.8,
-      roughness: 0.3,
-      transparent: true,
-      opacity: 0
-    });
-    
-    const housing = new THREE.Mesh(housingGeometry, housingMaterial);
-    housing.position.z = -0.15;
-    this.rotaryGroup.add(housing);
-
-    // Create triangular rotor
-    const rotorShape = new THREE.Shape();
-    for (let i = 0; i < 3; i++) {
-      const angle = (i / 3) * Math.PI * 2 - Math.PI / 2;
-      const x = Math.cos(angle) * 1.2;
-      const y = Math.sin(angle) * 1.2;
-      if (i === 0) {
-        rotorShape.moveTo(x, y);
-      } else {
-        rotorShape.lineTo(x, y);
+      
+      // Create the sprite mesh with the first frame
+      if (this.gifFrames.length > 0) {
+        const aspectRatio = width / height;
+        const spriteHeight = 3;
+        const spriteWidth = spriteHeight * aspectRatio;
+        
+        const geometry = new THREE.PlaneGeometry(spriteWidth, spriteHeight);
+        const material = new THREE.MeshBasicMaterial({
+          map: this.gifFrames[0],
+          transparent: true,
+          opacity: 0,
+          side: THREE.DoubleSide
+        });
+        
+        this.rotarySprite = new THREE.Mesh(geometry, material);
+        this.rotarySprite.visible = false;
+        scene.add(this.rotarySprite);
+        
+        this.gifStartTime = Date.now();
       }
+      
+    } catch (error) {
+      console.error('Error loading GIF:', error);
+      // Fallback: create a placeholder
+      this.createFallbackRotarySprite(scene);
     }
-    rotorShape.closePath();
-
-    const rotorGeometry = new THREE.ExtrudeGeometry(rotorShape, {
-      depth: 0.25,
-      bevelEnabled: true,
-      bevelThickness: 0.03,
-      bevelSize: 0.03,
-      bevelSegments: 2
-    });
-
-    const rotorMaterial = new THREE.MeshStandardMaterial({
+  }
+  
+  private createFallbackRotarySprite(scene: THREE.Scene) {
+    const geometry = new THREE.PlaneGeometry(3, 3);
+    const material = new THREE.MeshBasicMaterial({
       color: 0x00ff88,
-      metalness: 0.6,
-      roughness: 0.4,
-      emissive: 0x00ff88,
-      emissiveIntensity: 0.3,
       transparent: true,
       opacity: 0
     });
-
-    const rotor = new THREE.Mesh(rotorGeometry, rotorMaterial);
-    rotor.userData = { isRotor: true };
-    this.rotaryGroup.add(rotor);
-
-    // Add glow ring
-    const glowRing = new THREE.Mesh(
-      new THREE.RingGeometry(1.8, 2.2, 32),
-      new THREE.MeshBasicMaterial({
-        color: 0x00ff88,
-        transparent: true,
-        opacity: 0,
-        side: THREE.DoubleSide
-      })
-    );
-    glowRing.position.z = 0.2;
-    this.rotaryGroup.add(glowRing);
-
-    // Add outer glow ring
-    const outerGlow = new THREE.Mesh(
-      new THREE.RingGeometry(2.2, 2.8, 32),
-      new THREE.MeshBasicMaterial({
-        color: 0x00ff88,
-        transparent: true,
-        opacity: 0,
-        side: THREE.DoubleSide
-      })
-    );
-    outerGlow.position.z = 0.15;
-    this.rotaryGroup.add(outerGlow);
-
-    this.rotaryGroup.visible = false;
-    scene.add(this.rotaryGroup);
+    this.rotarySprite = new THREE.Mesh(geometry, material);
+    this.rotarySprite.visible = false;
+    scene.add(this.rotarySprite);
   }
-
-  private createRX7Logo(scene: THREE.Scene) {
-    this.rx7Group = new THREE.Group();
-
-    // Create "RX-7" text using 3D geometry
-    // R
-    const rGroup = new THREE.Group();
-    rGroup.add(this.createLetterBar(0, 0.5, 0.1, 1.2)); // vertical
-    rGroup.add(this.createLetterBar(0.25, 1, 0.6, 0.1)); // top horizontal
-    rGroup.add(this.createLetterBar(0.25, 0.5, 0.6, 0.1)); // middle horizontal
-    rGroup.add(this.createLetterBar(0.45, 0.75, 0.1, 0.6)); // right vertical top
-    rGroup.add(this.createLetterBar(0.35, 0.1, 0.4, 0.1, Math.PI / 6)); // diagonal leg
-    rGroup.position.x = -2;
-    this.rx7Group.add(rGroup);
-
-    // X
-    const xGroup = new THREE.Group();
-    xGroup.add(this.createLetterBar(0, 0.5, 0.12, 1.4, Math.PI / 4));
-    xGroup.add(this.createLetterBar(0, 0.5, 0.12, 1.4, -Math.PI / 4));
-    xGroup.position.x = -0.7;
-    this.rx7Group.add(xGroup);
-
-    // Dash
-    const dashGroup = new THREE.Group();
-    dashGroup.add(this.createLetterBar(0, 0.5, 0.5, 0.12));
-    dashGroup.position.x = 0.4;
-    this.rx7Group.add(dashGroup);
-
-    // 7
-    const sevenGroup = new THREE.Group();
-    sevenGroup.add(this.createLetterBar(0, 1, 0.7, 0.12)); // top
-    sevenGroup.add(this.createLetterBar(0.15, 0.4, 0.12, 1.3, Math.PI / 8)); // diagonal
-    sevenGroup.position.x = 1.3;
-    this.rx7Group.add(sevenGroup);
-
-    // Add glowing underline
-    const underline = new THREE.Mesh(
-      new THREE.BoxGeometry(4.5, 0.08, 0.05),
-      new THREE.MeshBasicMaterial({
-        color: 0xff8800,
-        transparent: true,
-        opacity: 0
-      })
-    );
-    underline.position.y = -0.3;
-    underline.userData = { isUnderline: true };
-    this.rx7Group.add(underline);
-
-    // Add FC badge
-    const fcGroup = new THREE.Group();
+  
+  private updateGifFrame() {
+    if (this.gifFrames.length === 0 || !this.rotarySprite) return;
     
-    const fcBadge = new THREE.Mesh(
-      new THREE.BoxGeometry(1.2, 0.5, 0.05),
-      new THREE.MeshBasicMaterial({
-        color: 0xff8800,
-        transparent: true,
-        opacity: 0
-      })
-    );
-    fcGroup.add(fcBadge);
-    fcGroup.position.y = -0.8;
-    fcGroup.userData = { isFCBadge: true };
-    this.rx7Group.add(fcGroup);
+    // Calculate current frame based on elapsed time and frame delays
+    let elapsed = Date.now() - this.gifStartTime;
+    
+    // Calculate total loop duration
+    const totalLoopTime = this.gifFrameDelays.reduce((sum, delay) => sum + delay, 0);
+    elapsed = elapsed % totalLoopTime;
+    
+    // Find which frame we should be on based on cumulative delays
+    let cumulativeTime = 0;
+    let currentFrame = 0;
+    
+    for (let i = 0; i < this.gifFrameDelays.length; i++) {
+      cumulativeTime += this.gifFrameDelays[i];
+      if (elapsed < cumulativeTime) {
+        currentFrame = i;
+        break;
+      }
+    }
+    
+    // Update texture to current frame
+    if (this.gifFrames[currentFrame] && currentFrame !== this.currentGifFrame) {
+      const material = this.rotarySprite.material as THREE.MeshBasicMaterial;
+      material.map = this.gifFrames[currentFrame];
+      material.needsUpdate = true;
+      this.currentGifFrame = currentFrame;
+    }
+  }
 
-    // Add outer glow frame
-    const glowFrame = new THREE.Mesh(
-      new THREE.RingGeometry(2.5, 3.0, 64),
-      new THREE.MeshBasicMaterial({
-        color: 0xff8800,
+  private createRx7Sprite(scene: THREE.Scene) {
+    const textureLoader = new THREE.TextureLoader();
+    textureLoader.load('assets/rx7.png', (texture) => {
+      const aspectRatio = texture.image.width / texture.image.height;
+      const height = 3;
+      const width = height * aspectRatio;
+      
+      const geometry = new THREE.PlaneGeometry(width, height);
+      const material = new THREE.MeshBasicMaterial({
+        map: texture,
         transparent: true,
         opacity: 0,
         side: THREE.DoubleSide
-      })
-    );
-    glowFrame.position.z = -0.1;
-    this.rx7Group.add(glowFrame);
-
-    this.rx7Group.visible = false;
-    this.rx7Group.position.y = 0.3;
-    scene.add(this.rx7Group);
-  }
-
-  private createLetterBar(x: number, y: number, width: number, height: number, rotation = 0): THREE.Mesh {
-    const geometry = new THREE.BoxGeometry(width, height, 0.15);
-    const material = new THREE.MeshStandardMaterial({
-      color: 0xff8800,
-      metalness: 0.7,
-      roughness: 0.3,
-      emissive: 0xff8800,
-      emissiveIntensity: 0.4,
-      transparent: true,
-      opacity: 0
+      });
+      
+      this.rx7Sprite = new THREE.Mesh(geometry, material);
+      this.rx7Sprite.visible = false;
+      scene.add(this.rx7Sprite);
     });
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(x, y, 0);
-    mesh.rotation.z = rotation;
-    return mesh;
+
+    // Fallback
+    setTimeout(() => {
+      if (!this.rx7Sprite) {
+        const geometry = new THREE.PlaneGeometry(3, 3);
+        const material = new THREE.MeshBasicMaterial({
+          color: 0xff8800,
+          transparent: true,
+          opacity: 0
+        });
+        this.rx7Sprite = new THREE.Mesh(geometry, material);
+        this.rx7Sprite.visible = false;
+        scene.add(this.rx7Sprite);
+      }
+    }, 2000);
   }
 
   private startBootSequence() {
@@ -413,19 +385,20 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.phase = 'rotary';
       this.phaseTime = 0;
+      this.gifStartTime = Date.now(); // Reset GIF animation timing
       
-      if (this.bootTextMesh) {
-        (this.bootTextMesh as unknown as THREE.Group).visible = false;
+      if (this.bootGroup) {
+        this.bootGroup.visible = false;
       }
-      if (this.rotaryGroup) {
-        this.rotaryGroup.visible = true;
+      if (this.rotarySprite) {
+        this.rotarySprite.visible = true;
       }
       
       this.targetGlitch = 0;
       
       setTimeout(() => {
         this.transitionToRX7();
-      }, 3000);
+      }, 2500);
     }, 500);
   }
 
@@ -437,18 +410,18 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
       this.phase = 'rx7';
       this.phaseTime = 0;
       
-      if (this.rotaryGroup) {
-        this.rotaryGroup.visible = false;
+      if (this.rotarySprite) {
+        this.rotarySprite.visible = false;
       }
-      if (this.rx7Group) {
-        this.rx7Group.visible = true;
+      if (this.rx7Sprite) {
+        this.rx7Sprite.visible = true;
       }
       
       this.targetGlitch = 0;
       
       setTimeout(() => {
         this.transitionToHome();
-      }, 3000);
+      }, 2500);
     }, 500);
   }
 
@@ -456,8 +429,8 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
     this.phase = 'transition';
     this.targetGlitch = 1.5;
     
-        setTimeout(() => {
-          this.router.navigate(['/home']);
+    setTimeout(() => {
+      this.router.navigate(['/home']);
     }, 800);
   }
 
@@ -489,108 +462,60 @@ export class IntroComponent implements AfterViewInit, OnDestroy {
         this.animateRX7(delta);
         break;
       case 'transition':
-        camera.position.z -= delta * 10;
+        if (this.camera) {
+          this.camera.position.z -= delta * 8;
+        }
         break;
     }
   }
 
   private animateBoot(delta: number) {
-    if (!this.bootTextMesh) return;
+    if (!this.bootGroup) return;
     
-    const group = this.bootTextMesh as unknown as THREE.Group;
-    
-    // Animate boot text lines appearing
-    group.children.forEach((child) => {
-      if (child instanceof THREE.Mesh && child.userData['delay'] !== undefined) {
-        const delay = child.userData['delay'];
-        if (this.phaseTime > delay) {
-          const material = child.material as THREE.MeshBasicMaterial;
-          material.opacity = Math.min(1, (this.phaseTime - delay) * 2);
+    this.bootGroup.children.forEach((child) => {
+      if (child instanceof THREE.Mesh) {
+        const material = child.material as THREE.MeshBasicMaterial;
+        const type = child.userData['type'];
+        
+        if (type === 'hex') {
+          // Fade in hexagons
+          material.opacity = Math.min(0.8, this.phaseTime * 0.8);
+        } else if (type === 'line') {
+          const delay = child.userData['delay'] || 0;
+          if (this.phaseTime > delay) {
+            material.opacity = Math.min(0.9, (this.phaseTime - delay) * 2);
+          }
+        } else if (type === 'loadingFrame') {
+          material.opacity = Math.min(0.4, this.phaseTime * 0.5);
+        } else if (type === 'loadingFill') {
+          material.opacity = Math.min(0.9, this.phaseTime * 0.8);
+          const progress = Math.min(1, this.phaseTime / 2);
+          child.scale.x = progress * 240;
+          child.position.x = -1.2 + progress * 1.2;
         }
       }
-      
-      // Animate loading bar
-      if (child instanceof THREE.Mesh && child.userData['isLoadingBar']) {
-        const progress = Math.min(1, this.phaseTime / 2);
-        child.scale.x = progress * 290;
-        child.position.x = -1.45 + progress * 1.45;
-      }
     });
-
-    // Pulse outer hexagons
-    const pulse = Math.sin(this.phaseTime * 5) * 0.1 + 1;
-    group.scale.set(pulse, pulse, 1);
   }
 
   private animateRotary(delta: number) {
-    if (!this.rotaryGroup) return;
+    if (!this.rotarySprite) return;
     
-    // Fade in all parts
-    this.rotaryGroup.children.forEach((child) => {
-      if (child instanceof THREE.Mesh) {
-        const material = child.material as THREE.MeshStandardMaterial | THREE.MeshBasicMaterial;
-        material.opacity = Math.min(material.opacity + delta * 2, child.userData['isRotor'] ? 0.9 : 0.7);
-      }
-    });
-
-    // Rotate the rotor
-    this.rotaryGroup.children.forEach((child) => {
-      if (child instanceof THREE.Mesh && child.userData['isRotor']) {
-        child.rotation.z += delta * 3;
-      }
-    });
-
-    // Pulsing scale
-    const scale = 1 + Math.sin(this.phaseTime * 3) * 0.05;
-    this.rotaryGroup.scale.set(scale, scale, 1);
+    // Update GIF frame
+    this.updateGifFrame();
     
-    // Slight wobble
-    this.rotaryGroup.rotation.x = Math.sin(this.phaseTime * 2) * 0.1;
-    this.rotaryGroup.rotation.y = Math.cos(this.phaseTime * 1.5) * 0.1;
+    const material = this.rotarySprite.material as THREE.MeshBasicMaterial;
+    
+    // Fade in
+    material.opacity = Math.min(1, this.phaseTime * 1.5);
   }
 
   private animateRX7(delta: number) {
-    if (!this.rx7Group) return;
+    if (!this.rx7Sprite) return;
     
-    // Fade in letters with cascade effect
-    let delay = 0;
-    this.rx7Group.children.forEach((child) => {
-      if (child instanceof THREE.Group) {
-        child.children.forEach((letterPart) => {
-          if (letterPart instanceof THREE.Mesh) {
-            const material = letterPart.material as THREE.MeshStandardMaterial | THREE.MeshBasicMaterial;
-            if (this.phaseTime > delay) {
-              material.opacity = Math.min(1, (this.phaseTime - delay) * 3);
-            }
-          }
-        });
-        delay += 0.15;
-      } else if (child instanceof THREE.Mesh) {
-        const material = child.material as THREE.MeshBasicMaterial;
-        
-        if (child.userData['isUnderline']) {
-          if (this.phaseTime > 0.6) {
-            material.opacity = Math.min(0.9, (this.phaseTime - 0.6) * 2);
-            child.scale.x = Math.min(1, (this.phaseTime - 0.6) * 2);
-          }
-        } else if (child.userData['isFCBadge']) {
-          if (this.phaseTime > 0.8) {
-            material.opacity = Math.min(0.8, (this.phaseTime - 0.8) * 2);
-          }
-        } else {
-          // Glow frame
-          if (this.phaseTime > 1) {
-            material.opacity = Math.min(0.4, (this.phaseTime - 1) * 0.5);
-          }
-        }
-      }
-    });
-
-    // Gentle floating animation
-    this.rx7Group.position.y = 0.3 + Math.sin(this.phaseTime * 2) * 0.1;
+    const material = this.rx7Sprite.material as THREE.MeshBasicMaterial;
     
-    // Subtle rotation
-    this.rx7Group.rotation.y = Math.sin(this.phaseTime * 1.5) * 0.05;
+    // Fade in
+    material.opacity = Math.min(1, this.phaseTime * 1.5);
   }
 
   playRx7Audio() {
