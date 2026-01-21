@@ -1,54 +1,103 @@
-<div class="dashboard">
-  <!-- Top Bar -->
-  <div class="top-bar">
-    <div class="vehicle-model" (click)="goToIntro()">RX-7 FC</div>
-    <div class="music-status">MUSIC</div>
-    <div class="time" (click)="goToScreensaver()">{{ time }}</div>
-  </div>
+<div class="dashboard-wrapper">
+  <!-- Three.js Background -->
+  <div #threeBackground class="three-background"></div>
+  
+  <!-- CRT Overlay Effects -->
+  <div class="crt-overlay"></div>
+  
+  <!-- Dashboard Content -->
+  <div class="dashboard">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="vehicle-model" (click)="goToIntro()">
+        <span class="model-prefix">MAZDA</span>
+        <span class="model-name">RX-7 FC</span>
+      </div>
+      <div class="status-center">
+        <span class="status-indicator active"></span>
+        <span class="status-text">SYSTEM ONLINE</span>
+      </div>
+      <div class="time-block" (click)="goToScreensaver()">
+        <div class="time">{{ time }}</div>
+        <div class="date">{{ date }}</div>
+      </div>
+    </div>
 
-  <!-- Main Grid -->
-  <div class="main-grid">
-    <!-- Music Panel -->
-    <div class="panel music-panel">
-      <h3>MUSIC</h3>
-      <div class="now-playing">
-        <div class="playing-text">Now Playing</div>
-        <div class="progress-bar">
-          <div class="progress" [style.width.%]="playbackProgress"></div>
+    <!-- Main Grid -->
+    <div class="main-grid">
+      <!-- Music Panel -->
+      <div class="panel music-panel">
+        <div class="panel-header">
+          <span class="panel-icon">♫</span>
+          <h3>AUDIO</h3>
         </div>
-        <div class="music-controls">
-          <button class="music-btn" aria-label="Back">
-            <span class="material-icons">skip_previous</span>
+        <div class="now-playing">
+          <div class="track-info">
+            <div class="track-name">No Track</div>
+            <div class="track-artist">---</div>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress" [style.width.%]="playbackProgress"></div>
+              <div class="progress-glow" [style.width.%]="playbackProgress"></div>
+            </div>
+            <div class="progress-time">
+              <span>1:24</span>
+              <span>3:45</span>
+            </div>
+          </div>
+          <div class="music-controls">
+            <button class="music-btn" aria-label="Back">
+              <span class="material-icons">skip_previous</span>
+            </button>
+            <button class="music-btn play-btn" aria-label="Play/Pause">
+              <span class="material-icons">play_arrow</span>
+            </button>
+            <button class="music-btn" aria-label="Skip">
+              <span class="material-icons">skip_next</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Soundboard Panel -->
+      <div class="panel soundboard-panel">
+        <div class="panel-header warning">
+          <span class="panel-icon">⚠</span>
+          <h3>DO NOT PUSH</h3>
+        </div>
+        <app-soundboard></app-soundboard>
+      </div>
+
+      <!-- Controls Panel -->
+      <div class="panel controls-panel">
+        <div class="panel-header">
+          <span class="panel-icon">◎</span>
+          <h3>CONTROLS</h3>
+        </div>
+        <app-controls></app-controls>
+      </div>
+
+      <!-- Settings Panel -->
+      <div class="panel settings-panel">
+        <div class="panel-header">
+          <span class="panel-icon">⚙</span>
+          <h3>SYSTEM</h3>
+        </div>
+        <div class="settings-content">
+          <button class="setting-btn eq-btn" (click)="goToAudioSettings()">
+            <span class="btn-icon">📊</span>
+            <span class="btn-label">EQUALIZER</span>
           </button>
-          <button class="music-btn" aria-label="Play/Pause">
-            <span class="material-icons">play_arrow</span>
-          </button>
-          <button class="music-btn" aria-label="Skip">
-            <span class="material-icons">skip_next</span>
+          <button class="setting-btn bluetooth-btn" (click)="goToBluetoothSettings()">
+            <span class="btn-icon">📡</span>
+            <span class="btn-label">BLUETOOTH</span>
           </button>
         </div>
       </div>
     </div>
-
-    <!-- Soundboard Panel -->
-    <div class="panel soundboard-panel">
-      <h3>DO NOT PUSH</h3>
-      <app-soundboard></app-soundboard>
-    </div>
-
-    <!-- Controls Panel -->
-    <div class="panel controls-panel">
-      <h3>CONTROLS</h3>
-      <app-controls></app-controls>
-    </div>
-
-    <!-- Settings Panel -->
-    <div class="panel settings-panel">
-      <h3>SETTINGS</h3>
-      <div class="settings-content">
-        <button class="eq-btn" (click)="goToAudioSettings()">EQ</button>
-        <button class="bluetooth-btn" (click)="goToBluetoothSettings()">🔵 BT</button>
-      </div>
-    </div>
   </div>
+
+  <!-- Scanline Overlay -->
+  <div class="scanlines"></div>
 </div>

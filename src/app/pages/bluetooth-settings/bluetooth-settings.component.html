@@ -163,11 +163,12 @@
           <div class="volume-control" *ngIf="volumeLevels[device.address] !== undefined">
             <label class="volume-label">🔊 Volume: {{ volumeLevels[device.address] }}%</label>
             <input 
+              #volumeSlider
               type="range" 
               min="0" 
               max="100" 
               [value]="volumeLevels[device.address]"
-              (input)="setVolume(device, $event.target.value)"
+              (input)="setVolume(device, +volumeSlider.value)"
               class="volume-slider">
           </div>
         </div>
