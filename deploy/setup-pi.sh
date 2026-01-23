@@ -66,17 +66,17 @@ EOF
 sudo tee /etc/systemd/system/headunit.service > /dev/null << 'EOF'
 [Unit]
 Description=RX7 Headunit Application
-After=network.target graphical.target headunit-updater.service
+After=graphical.target
 Wants=graphical.target
-Requires=headunit-updater.service
 
 [Service]
 Type=simple
-User=pi
+User=headunit
 Environment=DISPLAY=:0
 Environment=WAYLAND_DISPLAY=wayland-0
 Environment=XDG_RUNTIME_DIR=/run/user/1000
-ExecStart=/usr/bin/headunit
+# Use installed binary if exists, otherwise fall back to local build
+ExecStart=/bin/bash -c 'test -x /usr/bin/headunit && exec /usr/bin/headunit || exec /home/headunit/rx7-headunit/src-tauri/target/release/headunit || exec /home/headunit/rx7-headunit/src-tauri/target/debug/headunit'
 Restart=always
 RestartSec=3
 

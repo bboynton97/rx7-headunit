@@ -1,12 +1,25 @@
-<div style="width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: black;" (click)="goToHome()">
+<div class="screensaver-container" (click)="goToHome()">
   <video
     *ngIf="videoSrc"
     [src]="videoSrc"
     #videoPlayer
     autoplay
     muted
+    loop
     playsinline
-    (timeupdate)="onTimeUpdate(videoPlayer)"
-    style="width: 100vw; height: 100vh; object-fit: cover; display: block; background-color: black;"
+    (error)="onVideoError()"
+    class="screensaver-video"
   ></video>
+  
+  <!-- Fallback clock display if video fails -->
+  <div class="fallback-display" *ngIf="!videoSrc || videoError">
+    <div class="clock">{{ time }}</div>
+    <div class="date">{{ date }}</div>
+  </div>
+  
+  <!-- Tap hint -->
+  <div class="tap-hint">
+    <span class="material-icons">touch_app</span>
+    <span>Tap anywhere to exit</span>
+  </div>
 </div>

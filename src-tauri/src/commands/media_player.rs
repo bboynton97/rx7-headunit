@@ -73,7 +73,6 @@ async fn find_media_player_path(connection: &Connection, address: &str) -> Optio
             .await
         {
             if proxy.status().await.is_ok() {
-                println!("Found media player at: {}", path);
                 return Some(path);
             }
         }
@@ -83,7 +82,6 @@ async fn find_media_player_path(connection: &Connection, address: &str) -> Optio
     if let Ok(paths) = enumerate_bluez_players(connection).await {
         for path in paths {
             if path.contains(&addr_path) {
-                println!("Found media player via enumeration: {}", path);
                 return Some(path);
             }
         }
@@ -109,11 +107,6 @@ async fn enumerate_bluez_players(connection: &Connection) -> Result<Vec<String>,
         .filter(|(_, interfaces)| interfaces.contains_key("org.bluez.MediaPlayer1"))
         .map(|(path, _)| path.to_string())
         .collect();
-    
-    println!("Found {} media players via enumeration", player_paths.len());
-    for path in &player_paths {
-        println!("  - {}", path);
-    }
     
     Ok(player_paths)
 }
@@ -156,9 +149,6 @@ pub async fn play_media(address: &str) -> Result<(), Box<dyn std::error::Error +
             .await?;
         
         proxy.play().await?;
-        println!("Play command sent successfully");
-    } else {
-        println!("No media player found for device: {}", address);
     }
     
     Ok(())
@@ -174,9 +164,6 @@ pub async fn pause_media(address: &str) -> Result<(), Box<dyn std::error::Error 
             .await?;
         
         proxy.pause().await?;
-        println!("Pause command sent successfully");
-    } else {
-        println!("No media player found for device: {}", address);
     }
     
     Ok(())
@@ -192,9 +179,6 @@ pub async fn stop_media(address: &str) -> Result<(), Box<dyn std::error::Error +
             .await?;
         
         proxy.stop().await?;
-        println!("Stop command sent successfully");
-    } else {
-        println!("No media player found for device: {}", address);
     }
     
     Ok(())
@@ -210,9 +194,6 @@ pub async fn next_track(address: &str) -> Result<(), Box<dyn std::error::Error +
             .await?;
         
         proxy.next().await?;
-        println!("Next track command sent successfully");
-    } else {
-        println!("No media player found for device: {}", address);
     }
     
     Ok(())
@@ -228,9 +209,6 @@ pub async fn previous_track(address: &str) -> Result<(), Box<dyn std::error::Err
             .await?;
         
         proxy.previous().await?;
-        println!("Previous track command sent successfully");
-    } else {
-        println!("No media player found for device: {}", address);
     }
     
     Ok(())
@@ -256,8 +234,6 @@ pub async fn get_media_info(address: &str) -> Result<Option<MediaPlayerInfo>, Bo
         let album = extract_string_from_variant(&track_data, "Album");
         let duration = extract_u64_from_variant(&track_data, "Duration");
         
-        println!("Media info - Status: {}, Track: {:?}, Artist: {:?}, Position: {:?}, Duration: {:?}", 
-            status, track, artist, position, duration);
         
         Ok(Some(MediaPlayerInfo {
             name: "Bluetooth".to_string(),
@@ -269,7 +245,6 @@ pub async fn get_media_info(address: &str) -> Result<Option<MediaPlayerInfo>, Bo
             album,
         }))
     } else {
-        println!("No media player found for device: {}", address);
         Ok(None)
     }
 }
@@ -304,9 +279,6 @@ pub async fn set_volume(address: &str, volume: u8) -> Result<(), Box<dyn std::er
         // Convert 0-100 to 0-127
         let volume_bluez = ((volume as f32 / 100.0) * 127.0) as u16;
         proxy.set_volume(volume_bluez).await?;
-        println!("Volume set to {} (BlueZ: {})", volume, volume_bluez);
-    } else {
-        println!("No media transport found for device: {}", address);
     }
     
     Ok(())

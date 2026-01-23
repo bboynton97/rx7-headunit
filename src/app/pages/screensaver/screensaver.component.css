@@ -5,9 +5,70 @@
   overflow: hidden;
 }
 
-video {
+.screensaver-container {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #000;
+  cursor: pointer;
+}
+
+.screensaver-video {
   width: 100vw;
   height: 100vh;
   object-fit: cover;
   display: block;
+  background-color: #000;
+}
+
+/* Fallback clock display */
+.fallback-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-family: 'Orbitron', 'Courier New', monospace;
+}
+
+.fallback-display .clock {
+  font-size: 6rem;
+  font-weight: 700;
+  color: #00ff88;
+  text-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
+  letter-spacing: 0.1em;
+}
+
+.fallback-display .date {
+  font-size: 1.5rem;
+  color: rgba(0, 255, 136, 0.7);
+  letter-spacing: 0.2em;
+  margin-top: 10px;
+}
+
+/* Tap hint */
+.tap-hint {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'Orbitron', 'Courier New', monospace;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  animation: fade-pulse 3s ease-in-out infinite;
+}
+
+.tap-hint .material-icons {
+  font-size: 1.2rem;
+}
+
+@keyframes fade-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
 }

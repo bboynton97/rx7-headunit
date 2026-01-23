@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { invoke } from '@tauri-apps/api/core';
+import { BluetoothService } from '../../services/bluetooth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-controls',
@@ -10,8 +12,24 @@ import { invoke } from '@tauri-apps/api/core';
   templateUrl: './controls.component.html',
   styleUrls: ['./controls.component.css']
 })
-export class ControlsComponent {
+export class ControlsComponent implements OnInit, OnDestroy {
   private _brightness: number = 60;
+  private volumeSubscription: Subscription | null = null;
+
+  constructor(private bluetooth: BluetoothService) {}
+
+  ngOnInit() {
+    // Subscribe to bluetooth volume changes
+    this.volumeSubscription = this.bluetooth.volume$.subscribe(vol => {
+      this._volume = vol;
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.volumeSubscription) {
+      this.volumeSubscription.unsubscribe();
+    }
+  }
 
   get brightness(): number {
     return this._brightness;
@@ -46,16 +64,14 @@ export class ControlsComponent {
   }
 
   private async updateVolume(value: number) {
-    await invoke('set_system_volume', { value });
+    await this.bluetooth.setVolume(value);
   }
 
   async incrementVolume() {
     this.volume = Math.min(100, this.volume + 1);
-    await this.updateVolume(this.volume);
   }
 
   async decrementVolume() {
     this.volume = Math.max(0, this.volume - 1);
-    await this.updateVolume(this.volume);
   }
 } 
