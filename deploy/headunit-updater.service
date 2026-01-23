@@ -1,0 +1,15 @@
+[Unit]
+Description=Headunit Auto-Updater (runs on boot)
+After=network-online.target
+Wants=network-online.target
+Before=headunit.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/headunit/headunit-updater.sh
+# Wait for network with timeout
+ExecStartPre=/bin/bash -c 'for i in {1..30}; do ping -c1 github.com && break || sleep 1; done'
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,18 @@
+[Unit]
+Description=RX7 Headunit Application
+After=network.target graphical.target headunit-updater.service
+Wants=graphical.target
+Requires=headunit-updater.service
+
+[Service]
+Type=simple
+User=pi
+Environment=DISPLAY=:0
+Environment=WAYLAND_DISPLAY=wayland-0
+Environment=XDG_RUNTIME_DIR=/run/user/1000
+ExecStart=/usr/bin/headunit
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=graphical.target
