@@ -39,6 +39,14 @@
   font-weight: bold;
   color: #ff8800;
   text-shadow: 0 0 10px #ff8800;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  font-size: 2.5rem;
+  color: #00bfff;
 }
 
 .status-indicators {
@@ -217,6 +225,21 @@
 }
 
 .error-icon {
+  font-size: 1.4rem;
+  vertical-align: middle;
+}
+
+/* Material Icons in buttons */
+.btn .material-icons {
+  font-size: 1.2rem;
+  vertical-align: middle;
+}
+
+.btn-small .material-icons {
+  font-size: 1rem;
+}
+
+.btn-media .material-icons {
   font-size: 1.2rem;
 }
 
@@ -315,6 +338,11 @@
   text-align: center;
 }
 
+.device-icon .material-icons {
+  font-size: 2.5rem;
+  color: #00ff88;
+}
+
 .device-details {
   flex: 1;
 }
@@ -372,6 +400,13 @@
   color: #ff00ff;
   font-weight: bold;
   margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.media-status-icon {
+  font-size: 1rem;
 }
 
 .track-info {
@@ -410,6 +445,13 @@
   font-size: 0.9rem;
   color: #00ffff;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.volume-icon {
+  font-size: 1.2rem;
 }
 
 .volume-slider {
@@ -457,6 +499,10 @@
   font-size: 4rem;
   margin-bottom: 20px;
   opacity: 0.5;
+}
+
+.no-devices-icon .material-icons {
+  font-size: 4rem;
 }
 
 .no-devices p {

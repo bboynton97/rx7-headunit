@@ -1,6 +1,6 @@
 <div class="bluetooth-settings">
   <div class="header">
-    <h1>🔵 Bluetooth Settings</h1>
+    <h1><span class="material-icons header-icon">bluetooth</span> Bluetooth Settings</h1>
     <div class="status-indicators">
       <div class="status-item" [class.active]="status?.adapter_powered">
         <span class="status-dot"></span>
@@ -20,7 +20,7 @@
   <div class="controls">
     <div class="controls-left">
       <button class="btn btn-back" (click)="goBack()">
-        ⬅️ Back
+        <span class="material-icons">arrow_back</span> Back
       </button>
     </div>
     <div class="controls-right">
@@ -29,25 +29,25 @@
         (click)="startDiscovery()" 
         [disabled]="isDiscovering || isLoading"
         *ngIf="!isDiscovering">
-        🔍 Start Discovery
+        <span class="material-icons">bluetooth_searching</span> Start Discovery
       </button>
       <button 
         class="btn btn-secondary" 
         (click)="stopDiscovery()" 
         [disabled]="!isDiscovering">
-        ⏹️ Stop Discovery
+        <span class="material-icons">stop</span> Stop Discovery
       </button>
       <button 
         class="btn btn-refresh" 
         (click)="refreshDevices()" 
         [disabled]="isLoading">
-        🔄 Refresh
+        <span class="material-icons">refresh</span> Refresh
       </button>
     </div>
   </div>
 
   <div class="error-message" *ngIf="errorMessage">
-    <span class="error-icon">⚠️</span>
+    <span class="error-icon material-icons">warning</span>
     {{ errorMessage }}
   </div>
 
@@ -68,7 +68,7 @@
       <div class="device-card" *ngFor="let device of devices">
         <div class="device-info">
           <div class="device-icon">
-            {{ getDeviceClassIcon(device) }}
+            <span class="material-icons">{{ getDeviceClassIcon(device) }}</span>
           </div>
           <div class="device-details">
             <div class="device-name">
@@ -82,7 +82,7 @@
             </div>
             <div class="media-info" *ngIf="device.connected && mediaInfo[device.address]">
               <div class="media-status">
-                {{ getMediaStatusIcon(device) }} {{ getMediaStatusText(device) }}
+                <span class="material-icons media-status-icon">{{ getMediaStatusIcon(device) }}</span> {{ getMediaStatusText(device) }}
               </div>
               <div class="track-info" *ngIf="mediaInfo[device.address].artist">
                 {{ mediaInfo[device.address].artist }} - {{ mediaInfo[device.address].album }}
@@ -96,31 +96,31 @@
             class="btn btn-small btn-primary" 
             (click)="pairDevice(device)"
             *ngIf="!device.paired">
-            🔗 Pair
+            <span class="material-icons">link</span> Pair
           </button>
           <button 
             class="btn btn-small btn-secondary" 
             (click)="unpairDevice(device)"
             *ngIf="device.paired">
-            🔓 Unpair
+            <span class="material-icons">link_off</span> Unpair
           </button>
           <button 
             class="btn btn-small btn-success" 
             (click)="connectDevice(device)"
             *ngIf="device.paired && !device.connected">
-            🔌 Connect
+            <span class="material-icons">power</span> Connect
           </button>
           <button 
             class="btn btn-small btn-warning" 
             (click)="disconnectDevice(device)"
             *ngIf="device.connected">
-            🔌 Disconnect
+            <span class="material-icons">power_off</span> Disconnect
           </button>
           <button 
             class="btn btn-small btn-info" 
             (click)="getAudioSinks(device)"
             *ngIf="device.connected">
-            🎵 Audio
+            <span class="material-icons">headphones</span> Audio
           </button>
         </div>
 
@@ -131,37 +131,37 @@
               class="btn btn-small btn-media" 
               (click)="playMedia(device)"
               title="Play">
-              ▶️
+              <span class="material-icons">play_arrow</span>
             </button>
             <button 
               class="btn btn-small btn-media" 
               (click)="pauseMedia(device)"
               title="Pause">
-              ⏸️
+              <span class="material-icons">pause</span>
             </button>
             <button 
               class="btn btn-small btn-media" 
               (click)="stopMedia(device)"
               title="Stop">
-              ⏹️
+              <span class="material-icons">stop</span>
             </button>
             <button 
               class="btn btn-small btn-media" 
               (click)="previousTrack(device)"
               title="Previous Track">
-              ⏮️
+              <span class="material-icons">skip_previous</span>
             </button>
             <button 
               class="btn btn-small btn-media" 
               (click)="nextTrack(device)"
               title="Next Track">
-              ⏭️
+              <span class="material-icons">skip_next</span>
             </button>
           </div>
           
           <!-- Volume Control -->
           <div class="volume-control" *ngIf="volumeLevels[device.address] !== undefined">
-            <label class="volume-label">🔊 Volume: {{ volumeLevels[device.address] }}%</label>
+            <label class="volume-label"><span class="material-icons volume-icon">volume_up</span> Volume: {{ volumeLevels[device.address] }}%</label>
             <input 
               #volumeSlider
               type="range" 
@@ -176,7 +176,7 @@
     </div>
     
     <div class="no-devices" *ngIf="devices.length === 0 && !isLoading">
-      <div class="no-devices-icon">📱</div>
+      <div class="no-devices-icon"><span class="material-icons">smartphone</span></div>
       <p>No devices found</p>
       <p class="hint">Start discovery to find nearby Bluetooth devices</p>
     </div>

@@ -1,6 +1,14 @@
 <div class="soundboard-grid">
-  <button class="soundboard-btn" (click)="playSound('music')">1</button>
-  <button class="soundboard-btn" (click)="playSound('nostalgia')">2</button>
-  <button class="soundboard-btn" (click)="playSound('anime')">3</button>
-  <button class="soundboard-btn" (click)="playSound('do_not_push')">4</button>
+  <button class="soundboard-btn" (click)="playSound('music')">
+    <span class="material-icons">music_note</span>
+  </button>
+  <button class="soundboard-btn" (click)="playSound('nostalgia')">
+    <span class="material-icons">computer</span>
+  </button>
+  <button class="soundboard-btn" (click)="playSound('anime')">
+    <span class="material-icons">auto_awesome</span>
+  </button>
+  <button class="soundboard-btn danger" (click)="playSound('do_not_push')">
+    <span class="material-icons">warning</span>
+  </button>
 </div> 

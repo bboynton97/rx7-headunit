@@ -264,15 +264,15 @@ export class BluetoothSettingsComponent implements OnInit, OnDestroy {
   }
 
   getDeviceClassIcon(device: BluetoothDevice): string {
-    if (!device.class) return '📱';
+    if (!device.class) return 'smartphone';
     
     const deviceClass = device.class >> 8;
     switch (deviceClass) {
-      case 0x04: return '💻'; // Computer
-      case 0x05: return '📱'; // Phone
-      case 0x06: return '🎧'; // Audio/Video
-      case 0x08: return '🎵'; // Audio
-      default: return '📱';
+      case 0x04: return 'computer'; // Computer
+      case 0x05: return 'smartphone'; // Phone
+      case 0x06: return 'headphones'; // Audio/Video
+      case 0x08: return 'music_note'; // Audio
+      default: return 'smartphone';
     }
   }
 
@@ -290,13 +290,13 @@ export class BluetoothSettingsComponent implements OnInit, OnDestroy {
 
   getMediaStatusIcon(device: BluetoothDevice): string {
     const info = this.mediaInfo[device.address];
-    if (!info) return '🎵';
+    if (!info) return 'music_note';
     
     switch (info.status.toLowerCase()) {
-      case 'playing': return '▶️';
-      case 'paused': return '⏸️';
-      case 'stopped': return '⏹️';
-      default: return '🎵';
+      case 'playing': return 'play_arrow';
+      case 'paused': return 'pause';
+      case 'stopped': return 'stop';
+      default: return 'music_note';
     }
   }
 
