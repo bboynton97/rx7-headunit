@@ -33,3 +33,4 @@ once_cell = "1.19"
 [target.'cfg(target_os = "linux")'.dependencies]
 rppal = "0.14.1"
 bluer = { version = "0.17", features = ["full"] }
+zbus = { version = "4", features = ["tokio"] }
