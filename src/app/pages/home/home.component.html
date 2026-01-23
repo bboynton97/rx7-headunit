@@ -11,7 +11,7 @@
     <div class="top-bar">
       <div class="vehicle-model" (click)="goToIntro()">
         <span class="model-prefix">MAZDA</span>
-        <span class="model-name">RX-7 FC</span>
+        <span class="model-name">RX-7 FC3S</span>
       </div>
       <div class="status-center">
         <span class="status-indicator active"></span>
@@ -31,11 +31,11 @@
           <span class="panel-icon">♫</span>
           <h3>AUDIO</h3>
           <span class="connection-status" *ngIf="hasActiveConnection">
-            <span class="bt-icon">📶</span>
+            <span class="bt-icon material-icons">bluetooth_connected</span>
             <span class="device-name">{{ connectedDevice?.name || 'Connected' }}</span>
           </span>
           <span class="connection-status disconnected" *ngIf="!hasActiveConnection" (click)="goToBluetoothSettings()">
-            <span class="bt-icon">📡</span>
+            <span class="bt-icon material-icons">bluetooth_searching</span>
             <span class="device-name">TAP TO CONNECT</span>
           </span>
         </div>
@@ -94,11 +94,11 @@
         </div>
         <div class="settings-content">
           <button class="setting-btn eq-btn" (click)="goToAudioSettings()">
-            <span class="btn-icon">📊</span>
+            <span class="btn-icon material-icons">equalizer</span>
             <span class="btn-label">EQUALIZER</span>
           </button>
           <button class="setting-btn bluetooth-btn" (click)="goToBluetoothSettings()">
-            <span class="btn-icon">📡</span>
+            <span class="btn-icon material-icons">bluetooth</span>
             <span class="btn-label">BLUETOOTH</span>
           </button>
         </div>
