@@ -249,6 +249,53 @@
 }
 
 /* Music Panel */
+.music-panel .panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.connection-status {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  color: #00ff88;
+  opacity: 0.8;
+}
+
+.connection-status .bt-icon {
+  font-size: 0.9rem;
+}
+
+.connection-status .device-name {
+  letter-spacing: 0.05em;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.connection-status.disconnected {
+  color: rgba(255, 136, 0, 0.7);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.connection-status.disconnected:hover {
+  color: #ff8800;
+  text-shadow: 0 0 10px rgba(255, 136, 0, 0.5);
+}
+
+.music-panel.no-connection {
+  border-color: rgba(255, 136, 0, 0.25);
+}
+
+.music-panel.no-connection .panel-header {
+  border-color: rgba(255, 136, 0, 0.2);
+}
+
 .now-playing {
   flex: 1;
   display: flex;
@@ -264,6 +311,12 @@
   font-size: 1rem;
   color: #fff;
   margin-bottom: 4px;
+  transition: all 0.3s ease;
+}
+
+.track-name.playing {
+  color: #00ff88;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
 }
 
 .track-artist {
@@ -331,16 +384,39 @@
   box-shadow: 0 0 10px rgba(255, 136, 0, 0.2);
 }
 
-.music-btn:hover {
+.music-btn:hover:not(:disabled) {
   background: rgba(255, 136, 0, 0.2);
   border-color: #ff8800;
   box-shadow: 0 0 20px rgba(255, 136, 0, 0.4);
+}
+
+.music-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .music-btn.play-btn {
   width: 52px;
   height: 52px;
   border-width: 2px;
+}
+
+.music-btn.play-btn.playing {
+  background: rgba(0, 255, 136, 0.15);
+  border-color: #00ff88;
+  color: #00ff88;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+  animation: pulse-playing 2s ease-in-out infinite;
+}
+
+@keyframes pulse-playing {
+  0%, 100% { 
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
+  }
 }
 
 .music-btn .material-icons {

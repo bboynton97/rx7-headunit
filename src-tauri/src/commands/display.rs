@@ -1,5 +1,4 @@
 use std::error::Error;
-use rppal::gpio::Gpio;
 use rppal::pwm::{Channel, Polarity, Pwm};
 
 pub struct DisplayBacklight {

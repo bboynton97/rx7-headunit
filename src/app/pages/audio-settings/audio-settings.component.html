@@ -1,1 +1,186 @@
-<p>audio-settings works!</p>
+<div class="audio-settings">
+  <!-- Header -->
+  <div class="header">
+    <button class="btn btn-back" (click)="goBack()">
+      <span class="material-icons">arrow_back</span>
+      BACK
+    </button>
+    <h1>
+      <span class="header-icon">📊</span>
+      AUDIO SETTINGS
+    </h1>
+    <div class="header-visualizer">
+      <div 
+        class="viz-bar" 
+        *ngFor="let bar of visualizerBars.slice(0, 16)" 
+        [style.height.%]="bar">
+      </div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <!-- Volume Section -->
+    <div class="panel volume-panel">
+      <div class="panel-header">
+        <span class="panel-icon">🔊</span>
+        <h3>MASTER VOLUME</h3>
+      </div>
+      <div class="volume-control">
+        <button class="mute-btn" (click)="toggleMute()" [class.muted]="isMuted">
+          <span class="volume-icon">{{ getVolumeIcon() }}</span>
+        </button>
+        <div class="volume-slider-container">
+          <input 
+            type="range" 
+            min="0" 
+            max="100" 
+            [value]="systemVolume"
+            (input)="setVolume(+$any($event.target).value)"
+            class="volume-slider"
+            [class.muted]="isMuted">
+          <div class="volume-track">
+            <div class="volume-fill" [style.width.%]="systemVolume"></div>
+            <div class="volume-glow" [style.width.%]="systemVolume"></div>
+          </div>
+          <div class="volume-ticks">
+            <span *ngFor="let tick of [0, 25, 50, 75, 100]">{{ tick }}</span>
+          </div>
+        </div>
+        <div class="volume-display" [class.muted]="isMuted">
+          <span class="volume-value">{{ systemVolume }}</span>
+          <span class="volume-unit">%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Equalizer Section -->
+    <div class="panel equalizer-panel">
+      <div class="panel-header">
+        <span class="panel-icon">🎚️</span>
+        <h3>EQUALIZER</h3>
+        <span class="preset-badge">{{ activePreset }}</span>
+      </div>
+      
+      <div class="eq-container">
+        <div class="eq-scale">
+          <span>+12dB</span>
+          <span>0dB</span>
+          <span>-12dB</span>
+        </div>
+        
+        <div class="eq-bands">
+          <div class="eq-band" *ngFor="let band of eqBands; let i = index">
+            <div class="eq-bar-container">
+              <div class="eq-bar-bg"></div>
+              <div 
+                class="eq-bar" 
+                [style.height.%]="getEQBarHeight(band.value)"
+                [style.background]="getEQBarColor(band.value)">
+                <div class="eq-bar-glow" [style.background]="getEQBarColor(band.value)"></div>
+              </div>
+              <div class="eq-center-line"></div>
+            </div>
+            <input 
+              type="range" 
+              min="-12" 
+              max="12" 
+              [value]="band.value"
+              (input)="setEQBand(i, +$any($event.target).value)"
+              class="eq-slider"
+              orient="vertical">
+            <div class="eq-label">
+              <span class="eq-value" [style.color]="getEQBarColor(band.value)">
+                {{ band.value > 0 ? '+' : '' }}{{ band.value }}
+              </span>
+              <span class="eq-freq">{{ band.frequency }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Presets Section -->
+    <div class="panel presets-panel">
+      <div class="panel-header">
+        <span class="panel-icon">🎛️</span>
+        <h3>PRESETS</h3>
+      </div>
+      <div class="presets-grid">
+        <button 
+          class="preset-btn" 
+          *ngFor="let preset of presets"
+          [class.active]="activePreset === preset.name"
+          (click)="applyPreset(preset)">
+          <span class="preset-icon">{{ preset.icon }}</span>
+          <span class="preset-name">{{ preset.name }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Balance & Fade Section -->
+    <div class="panel balance-panel">
+      <div class="panel-header">
+        <span class="panel-icon">◎</span>
+        <h3>BALANCE / FADE</h3>
+      </div>
+      
+      <div class="spatial-controls">
+        <!-- Balance Control -->
+        <div class="spatial-control">
+          <div class="spatial-label">
+            <span class="spatial-icon">◀</span>
+            <span class="spatial-title">BALANCE</span>
+            <span class="spatial-icon">▶</span>
+          </div>
+          <div class="spatial-slider-container">
+            <span class="spatial-end">L</span>
+            <input 
+              type="range" 
+              min="-100" 
+              max="100" 
+              [value]="balance"
+              (input)="setBalance(+$any($event.target).value)"
+              class="spatial-slider balance-slider">
+            <span class="spatial-end">R</span>
+          </div>
+          <div class="spatial-value">{{ getBalanceLabel() }}</div>
+        </div>
+
+        <!-- Fade Control -->
+        <div class="spatial-control">
+          <div class="spatial-label">
+            <span class="spatial-icon">▲</span>
+            <span class="spatial-title">FADE</span>
+            <span class="spatial-icon">▼</span>
+          </div>
+          <div class="spatial-slider-container">
+            <span class="spatial-end">R</span>
+            <input 
+              type="range" 
+              min="-100" 
+              max="100" 
+              [value]="fade"
+              (input)="setFade(+$any($event.target).value)"
+              class="spatial-slider fade-slider">
+            <span class="spatial-end">F</span>
+          </div>
+          <div class="spatial-value">{{ getFadeLabel() }}</div>
+        </div>
+
+        <!-- Speaker Diagram -->
+        <div class="speaker-diagram">
+          <div class="car-outline">
+            <div class="speaker front-left" [class.active]="balance <= 0 && fade >= 0"></div>
+            <div class="speaker front-right" [class.active]="balance >= 0 && fade >= 0"></div>
+            <div class="speaker rear-left" [class.active]="balance <= 0 && fade <= 0"></div>
+            <div class="speaker rear-right" [class.active]="balance >= 0 && fade <= 0"></div>
+            <div class="balance-indicator" 
+              [style.left.%]="50 + (balance / 2)"
+              [style.top.%]="50 - (fade / 2)">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

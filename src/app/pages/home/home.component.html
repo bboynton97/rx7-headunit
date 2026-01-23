@@ -26,15 +26,23 @@
     <!-- Main Grid -->
     <div class="main-grid">
       <!-- Music Panel -->
-      <div class="panel music-panel">
+      <div class="panel music-panel" [class.no-connection]="!hasActiveConnection">
         <div class="panel-header">
           <span class="panel-icon">♫</span>
           <h3>AUDIO</h3>
+          <span class="connection-status" *ngIf="hasActiveConnection">
+            <span class="bt-icon">📶</span>
+            <span class="device-name">{{ connectedDevice?.name || 'Connected' }}</span>
+          </span>
+          <span class="connection-status disconnected" *ngIf="!hasActiveConnection" (click)="goToBluetoothSettings()">
+            <span class="bt-icon">📡</span>
+            <span class="device-name">TAP TO CONNECT</span>
+          </span>
         </div>
         <div class="now-playing">
           <div class="track-info">
-            <div class="track-name">No Track</div>
-            <div class="track-artist">---</div>
+            <div class="track-name" [class.playing]="isPlaying">{{ trackName }}</div>
+            <div class="track-artist">{{ artistName }}</div>
           </div>
           <div class="progress-container">
             <div class="progress-bar">
@@ -42,18 +50,18 @@
               <div class="progress-glow" [style.width.%]="playbackProgress"></div>
             </div>
             <div class="progress-time">
-              <span>1:24</span>
-              <span>3:45</span>
+              <span>{{ currentTime }}</span>
+              <span>{{ totalTime }}</span>
             </div>
           </div>
           <div class="music-controls">
-            <button class="music-btn" aria-label="Back">
+            <button class="music-btn" aria-label="Previous" (click)="previousTrack()" [disabled]="!hasActiveConnection">
               <span class="material-icons">skip_previous</span>
             </button>
-            <button class="music-btn play-btn" aria-label="Play/Pause">
-              <span class="material-icons">play_arrow</span>
+            <button class="music-btn play-btn" [class.playing]="isPlaying" aria-label="Play/Pause" (click)="togglePlayPause()" [disabled]="!hasActiveConnection">
+              <span class="material-icons">{{ isPlaying ? 'pause' : 'play_arrow' }}</span>
             </button>
-            <button class="music-btn" aria-label="Skip">
+            <button class="music-btn" aria-label="Next" (click)="nextTrack()" [disabled]="!hasActiveConnection">
               <span class="material-icons">skip_next</span>
             </button>
           </div>

@@ -6,6 +6,9 @@ pub mod bluetooth;
 #[cfg(target_os = "linux")]
 pub mod display;
 
+#[cfg(target_os = "linux")]
+pub mod media_player;
+
 // Stub implementations for non-Linux platforms
 #[cfg(not(target_os = "linux"))]
 pub mod bluetooth {

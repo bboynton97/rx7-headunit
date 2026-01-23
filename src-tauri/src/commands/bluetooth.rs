@@ -5,6 +5,9 @@ use std::str::FromStr;
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
+use super::media_player;
+pub use super::media_player::MediaPlayerInfo;
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct BluetoothDevice {
     pub address: String,
@@ -21,17 +24,6 @@ pub struct BluetoothStatus {
     pub discoverable: bool,
     pub pairable: bool,
     pub devices: Vec<BluetoothDevice>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct MediaPlayerInfo {
-    pub name: String,
-    pub position: Option<u64>,
-    pub duration: Option<u64>,
-    pub status: String, // "playing", "paused", "stopped"
-    pub track: Option<String>,
-    pub artist: Option<String>,
-    pub album: Option<String>,
 }
 
 pub struct BluetoothManager {
@@ -215,108 +207,6 @@ impl BluetoothManager {
         }
     }
 
-    // Media playback control methods
-    pub async fn play_media(&self, address: &str) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        if let Some(adapter) = &self.adapter {
-            let address = Address::from_str(address)?;
-            let device = adapter.device(address)?;
-            
-            // Try to use media transport for play control
-            // Note: This is a simplified implementation - actual media control may require
-            // specific profile implementations (A2DP, AVRCP, etc.)
-            println!("Play media requested for device: {}", address);
-            // For now, we'll just log the request since the exact API may vary
-        }
-        Ok(())
-    }
-
-    pub async fn pause_media(&self, address: &str) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        if let Some(adapter) = &self.adapter {
-            let address = Address::from_str(address)?;
-            let device = adapter.device(address)?;
-            
-            println!("Pause media requested for device: {}", address);
-            // For now, we'll just log the request since the exact API may vary
-        }
-        Ok(())
-    }
-
-    pub async fn next_track(&self, address: &str) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        if let Some(adapter) = &self.adapter {
-            let address = Address::from_str(address)?;
-            let device = adapter.device(address)?;
-            
-            println!("Next track requested for device: {}", address);
-            // For now, we'll just log the request since the exact API may vary
-        }
-        Ok(())
-    }
-
-    pub async fn previous_track(&self, address: &str) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        if let Some(adapter) = &self.adapter {
-            let address = Address::from_str(address)?;
-            let device = adapter.device(address)?;
-            
-            println!("Previous track requested for device: {}", address);
-            // For now, we'll just log the request since the exact API may vary
-        }
-        Ok(())
-    }
-
-    pub async fn stop_media(&self, address: &str) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        if let Some(adapter) = &self.adapter {
-            let address = Address::from_str(address)?;
-            let device = adapter.device(address)?;
-            
-            println!("Stop media requested for device: {}", address);
-            // For now, we'll just log the request since the exact API may vary
-        }
-        Ok(())
-    }
-
-    pub async fn get_media_info(&self, address: &str) -> Result<Option<MediaPlayerInfo>, Box<dyn std::error::Error + Send + Sync>> {
-        if let Some(adapter) = &self.adapter {
-            let address = Address::from_str(address)?;
-            let device = adapter.device(address)?;
-            
-            // For now, return a placeholder since the exact API may vary
-            // In a real implementation, you would query the device's media transport
-            Ok(Some(MediaPlayerInfo {
-                name: "Bluetooth Device".to_string(),
-                position: None,
-                duration: None,
-                status: "unknown".to_string(),
-                track: None,
-                artist: None,
-                album: None,
-            }))
-        } else {
-            Ok(None)
-        }
-    }
-
-    pub async fn set_volume(&self, address: &str, volume: u8) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        if let Some(adapter) = &self.adapter {
-            let address = Address::from_str(address)?;
-            let device = adapter.device(address)?;
-            
-            println!("Set volume to {} for device: {}", volume, address);
-            // For now, we'll just log the request since the exact API may vary
-        }
-        Ok(())
-    }
-
-    pub async fn get_volume(&self, address: &str) -> Result<Option<u8>, Box<dyn std::error::Error + Send + Sync>> {
-        if let Some(adapter) = &self.adapter {
-            let address = Address::from_str(address)?;
-            let device = adapter.device(address)?;
-            
-            // For now, return a placeholder volume
-            Ok(Some(50))
-        } else {
-            Ok(None)
-        }
-    }
 }
 
 // Global Bluetooth manager instance
@@ -422,57 +312,43 @@ pub async fn get_bluetooth_status() -> Result<BluetoothStatus, String> {
     })
 }
 
-// Media playback control commands
+// Media playback control commands - using real D-Bus/BlueZ implementation
 #[tauri::command]
 pub async fn play_bluetooth_media(address: String) -> Result<(), String> {
-    let manager = BLUETOOTH_MANAGER.read().await;
-    manager.play_media(&address).await.map_err(|e| e.to_string())?;
-    Ok(())
+    media_player::play_media(&address).await.map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 pub async fn pause_bluetooth_media(address: String) -> Result<(), String> {
-    let manager = BLUETOOTH_MANAGER.read().await;
-    manager.pause_media(&address).await.map_err(|e| e.to_string())?;
-    Ok(())
+    media_player::pause_media(&address).await.map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 pub async fn next_bluetooth_track(address: String) -> Result<(), String> {
-    let manager = BLUETOOTH_MANAGER.read().await;
-    manager.next_track(&address).await.map_err(|e| e.to_string())?;
-    Ok(())
+    media_player::next_track(&address).await.map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 pub async fn previous_bluetooth_track(address: String) -> Result<(), String> {
-    let manager = BLUETOOTH_MANAGER.read().await;
-    manager.previous_track(&address).await.map_err(|e| e.to_string())?;
-    Ok(())
+    media_player::previous_track(&address).await.map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 pub async fn stop_bluetooth_media(address: String) -> Result<(), String> {
-    let manager = BLUETOOTH_MANAGER.read().await;
-    manager.stop_media(&address).await.map_err(|e| e.to_string())?;
-    Ok(())
+    media_player::stop_media(&address).await.map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 pub async fn get_bluetooth_media_info(address: String) -> Result<Option<MediaPlayerInfo>, String> {
-    let manager = BLUETOOTH_MANAGER.read().await;
-    manager.get_media_info(&address).await.map_err(|e| e.to_string())
+    media_player::get_media_info(&address).await.map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 pub async fn set_bluetooth_volume(address: String, volume: u8) -> Result<(), String> {
-    let manager = BLUETOOTH_MANAGER.read().await;
-    manager.set_volume(&address, volume).await.map_err(|e| e.to_string())?;
-    Ok(())
+    media_player::set_volume(&address, volume).await.map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 pub async fn get_bluetooth_volume(address: String) -> Result<Option<u8>, String> {
-    let manager = BLUETOOTH_MANAGER.read().await;
-    manager.get_volume(&address).await.map_err(|e| e.to_string())
+    media_player::get_volume(&address).await.map_err(|e| e.to_string())
 }

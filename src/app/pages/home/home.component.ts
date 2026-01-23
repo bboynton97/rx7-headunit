@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ControlsComponent } from '../../components/controls/controls.component';
 import { SoundboardComponent } from '../../components/soundboard/soundboard.component';
 import { CrtSceneService } from '../../services/crt-scene.service';
+import { BluetoothService, MediaPlayerInfo, BluetoothDevice } from '../../services/bluetooth.service';
 import * as THREE from 'three';
 
 @Component({
@@ -21,9 +22,10 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   date: string = '';
   private timer: any;
 
-  playbackProgress: number = 35;
-  rpmGaugeValue: number = 120;
-  tempGaugeValue: number = 80;
+  // Bluetooth media state
+  mediaInfo: MediaPlayerInfo | null = null;
+  connectedDevice: BluetoothDevice | null = null;
+  isBluetoothInitialized = false;
   
   // 3D elements
   private gridFloor: THREE.Group | null = null;
@@ -33,13 +35,34 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private router: Router,
-    private crtScene: CrtSceneService
+    private crtScene: CrtSceneService,
+    public bluetooth: BluetoothService
   ) {
     this.updateTime();
   }
 
   ngOnInit() {
     this.timer = setInterval(() => this.updateTime(), 1000);
+    this.initBluetooth();
+    
+    // Subscribe to bluetooth state
+    this.bluetooth.mediaInfo$.subscribe(info => {
+      this.mediaInfo = info;
+    });
+    this.bluetooth.connectedDevice$.subscribe(device => {
+      this.connectedDevice = device;
+    });
+    this.bluetooth.isInitialized$.subscribe(init => {
+      this.isBluetoothInitialized = init;
+    });
+  }
+
+  private async initBluetooth() {
+    try {
+      await this.bluetooth.initialize();
+    } catch (error) {
+      console.error('Bluetooth initialization failed:', error);
+    }
   }
 
   ngAfterViewInit() {
@@ -367,5 +390,46 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   goToBluetoothSettings() {
     this.router.navigate(['/bluetooth-settings']);
+  }
+
+  // Music controls
+  async togglePlayPause() {
+    await this.bluetooth.togglePlayPause();
+  }
+
+  async nextTrack() {
+    await this.bluetooth.next();
+  }
+
+  async previousTrack() {
+    await this.bluetooth.previous();
+  }
+
+  get trackName(): string {
+    return this.mediaInfo?.track || 'No Track';
+  }
+
+  get artistName(): string {
+    return this.mediaInfo?.artist || (this.connectedDevice?.name || '---');
+  }
+
+  get isPlaying(): boolean {
+    return this.mediaInfo?.status?.toLowerCase() === 'playing';
+  }
+
+  get playbackProgress(): number {
+    return this.bluetooth.getPlaybackProgress();
+  }
+
+  get currentTime(): string {
+    return this.bluetooth.formatDuration(this.mediaInfo?.position);
+  }
+
+  get totalTime(): string {
+    return this.bluetooth.formatDuration(this.mediaInfo?.duration);
+  }
+
+  get hasActiveConnection(): boolean {
+    return this.connectedDevice !== null;
   }
 }
